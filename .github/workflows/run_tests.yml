@@ -24,8 +24,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          cmake -S . -B build -DENABLE_ASAN=ON
-          cmake --build build -- -j
+          /usr/bin/cmake -S . -B build -DENABLE_ASAN=ON
+          /usr/bin/cmake --build build -- -j
       - name: "Validate expected executables"
         shell: bash
         run: |
@@ -87,5 +87,5 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cmake --build build --target unit_tests
-          ctest --test-dir build --output-on-failure
+          /usr/bin/cmake --build build --target unit_tests
+          /usr/bin/ctest --test-dir build --output-on-failure
