@@ -23,9 +23,6 @@ namespace plazza {
         XL = 8,
         XXL = 16
     };
-}
-
-
-
+} // namespace plazza
 
 #endif // PIZZAINFOS_HPP

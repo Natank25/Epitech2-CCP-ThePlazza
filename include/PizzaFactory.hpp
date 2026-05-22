@@ -57,6 +57,6 @@ namespace plazza {
             {"Americana", []() { return Pizza(AMERICANA_INGREDIENTS, 2000); }},
             {"Fantasia", []() { return Pizza(FANTASIA_INGREDIENTS, 4000); }}
         };
-}
+} // namespace plazza
 
 #endif // PIZZAFACTORY_HPP
