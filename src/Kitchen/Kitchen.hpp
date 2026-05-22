@@ -10,7 +10,7 @@
     #include <queue>
 
     #include "Cook.hpp"
-    #include "Pizza.hpp"
+    #include "../Pizza/Pizza.hpp"
     #include "Stock.hpp"
 
 namespace plazza {

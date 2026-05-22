@@ -7,10 +7,11 @@
 
 #ifndef PIZZA_HPP
     #define PIZZA_HPP
+#include <string>
 #include <vector>
 
-#include "Ingredient.hpp"
-#include "PizzaInfos.hpp"
+    #include "Ingredient.hpp"
+    #include "PizzaInfos.hpp"
 
 namespace plazza {
     class Pizza {

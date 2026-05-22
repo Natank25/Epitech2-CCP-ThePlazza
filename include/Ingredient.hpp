@@ -22,7 +22,7 @@ namespace plazza {
     static const std::string MUSHROOM_PATH{"assets/Mushrooms.png"};
     static const std::string STEAK_PATH{"assets/Steak.png"};
     static const std::string EGGPLANT_PATH{"assets/Eggplant.png"};
-    static const std::string GOAT_CHEESE_PATH{"assets/Goatcheese.png"};
+    static const std::string GOAT_CHEESE_PATH{"assets/GoatCheese.png"};
 
     static const Ingredient DOUGH = {"dough", TOMATO_PATH};
     static const Ingredient TOMATO = {"tomato", TOMATO_PATH};
