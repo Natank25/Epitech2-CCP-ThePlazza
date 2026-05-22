@@ -12,7 +12,7 @@
     #include <unordered_map>
 
     #include "Ingredient.hpp"
-    #include "Pizza.hpp"
+    #include "../src/Pizza/Pizza.hpp"
 
 namespace plazza {
     static const std::vector<Ingredient> MARGARITA_INGREDIENTS = {
