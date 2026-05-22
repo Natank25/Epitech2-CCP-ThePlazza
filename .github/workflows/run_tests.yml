@@ -1,0 +1,82 @@
+name: "Unit tests"
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v5
+      - name: "Build"
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cmake -S . -B build -DENABLE_ASAN=ON
+          cmake --build build -- -j
+      - name: "Validate expected executables"
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          expected_executables='${{ vars.EXECUTABLES }}'
+          if [ -z "${expected_executables//[[:space:],;]/}" ]; then
+            echo "vars.EXECUTABLES is empty or not defined"
+            exit 1
+          fi
+
+          mapfile -t executables < <(
+            printf '%s\n' "$expected_executables" \
+              | tr ',;' '\n\n' \
+              | tr ' ' '\n' \
+              | sed -E "s/^[[:space:]]+//; s/[[:space:]]+$//; s/^\"//; s/\"$//; s/^'//; s/'$//" \
+              | awk 'NF && !seen[$0]++'
+          )
+
+          if [ "${#executables[@]}" -eq 0 ]; then
+            echo "No valid executable names found in vars.EXECUTABLES"
+            exit 1
+          fi
+
+          invalid_executables=()
+          for executable in "${executables[@]}"; do
+            relative_path="${executable#./}"
+            candidate_paths=("./$relative_path" "./build/$relative_path")
+            found_path=""
+
+            for candidate_path in "${candidate_paths[@]}"; do
+              if [ -f "$candidate_path" ]; then
+                found_path="$candidate_path"
+                break
+              fi
+            done
+
+            if [ -z "$found_path" ]; then
+              invalid_executables+=("$executable (not found in ./ or ./build)")
+              continue
+            fi
+
+            if [ ! -x "$found_path" ]; then
+              invalid_executables+=("$executable (not executable: $found_path)")
+              continue
+            fi
+
+            echo "Validated executable: $executable -> $found_path"
+          done
+
+          if [ "${#invalid_executables[@]}" -gt 0 ]; then
+            echo "The following entries from vars.EXECUTABLES are invalid:"
+            printf ' - %s\n' "${invalid_executables[@]}"
+            exit 1
+          fi
+
+      - name: "Run CTest"
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake --build build --target unit_tests
+          ctest --test-dir build --output-on-failure
