@@ -11,7 +11,6 @@ set(ASAN_FLAGS -fsanitize=address -fno-omit-frame-pointer)
 set(SRC
         src/Kitchen/Kitchen.cpp
         src/Kitchen/Stock.cpp
-        src/Ingredients/Tomato.cpp
 )
 
 set(TESTS_SRC

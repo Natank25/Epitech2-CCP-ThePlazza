@@ -9,15 +9,15 @@
     #define PIZZA_HPP
 #include <vector>
 
-#include "IIngredient.hpp"
+#include "Ingredient.hpp"
 #include "PizzaInfos.hpp"
 
 namespace plazza {
     class Pizza {
     public:
-        Pizza(std::vector<IIngredient> ingredients, double timeToCook);
+        Pizza(std::vector<Ingredient> ingredients, double timeToCook);
     private:
-        std::vector<IIngredient> _ingredients;
+        std::vector<Ingredient> _ingredients;
         double _timeToCook;
     };
 
