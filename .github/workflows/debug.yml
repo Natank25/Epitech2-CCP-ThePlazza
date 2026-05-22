@@ -1,0 +1,12 @@
+name: Debug CI
+
+on: workflow_dispatch
+
+jobs:
+  debug:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
