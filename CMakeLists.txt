@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(ASAN_FLAGS -fsanitize=address -fno-omit-frame-pointer)
 
 set(SRC
+        src/Kitchen/Kitchen.cpp
 )
 
 set(TESTS_SRC
