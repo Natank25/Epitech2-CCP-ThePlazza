@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SRC
         src/Kitchen/Kitchen.cpp
         src/Kitchen/Stock.cpp
+        src/Ingredients/Tomato.cpp
 )
 
 set(MAIN

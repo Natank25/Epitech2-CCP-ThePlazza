@@ -14,8 +14,8 @@ namespace plazza {
     public:
         virtual ~IIngredient() = default;
 
-        virtual std::string getImagePath() const = 0;
-        virtual std::string getName() const = 0;
+        [[nodiscard]] virtual std::string getImagePath() const = 0;
+        [[nodiscard]] virtual std::string_view getName() const = 0;
     };
 }
 
