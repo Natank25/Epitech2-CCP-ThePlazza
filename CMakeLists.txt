@@ -10,6 +10,7 @@ set(ASAN_FLAGS -fsanitize=address -fno-omit-frame-pointer)
 
 set(SRC
         src/Kitchen/Kitchen.cpp
+        src/Kitchen/Stock.cpp
 )
 
 set(TESTS_SRC

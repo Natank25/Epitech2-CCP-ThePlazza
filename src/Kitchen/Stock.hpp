@@ -15,8 +15,13 @@ namespace plazza {
     class Stock {
     public:
         void refillIngredients();
-        void retrieveIngredient(std::string type);
+
+        bool retrieveIngredient(const std::string& type, unsigned int quantity);
+
     private:
+        static bool removeIngredientIfExists(unsigned int quantity,
+            std::pair<std::string const, std::atomic<unsigned long>> &elem);
+
         std::map<std::string, std::atomic<size_t>> _ingredients;
     };
 }
