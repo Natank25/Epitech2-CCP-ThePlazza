@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SRC
         src/Kitchen/Kitchen.cpp
+        src/Kitchen/Stock.cpp
 )
 
 set(MAIN
