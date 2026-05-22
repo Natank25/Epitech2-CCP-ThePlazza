@@ -17,9 +17,10 @@ namespace plazza {
     class Kitchen {
     public:
         explicit Kitchen(std::size_t _numberCooks);
-
-        void refill(double deltaTime);
     private:
+        void refill(double deltaTime);
+
+        double _timeSinceLastRefill;
         std::vector<Cook> _cooks;
         std::queue<PizzaOrder> _orders;
         Stock _stock;
