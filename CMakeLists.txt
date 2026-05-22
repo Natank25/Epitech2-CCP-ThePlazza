@@ -12,7 +12,6 @@ set(SRC
         src/Kitchen/Kitchen.cpp
         src/Kitchen/Stock.cpp
         src/Pizza/Pizza.cpp
-)
 
 set(TESTS_SRC
     tests/test.cpp
