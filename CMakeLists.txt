@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
 
 project(ThePlazza)
+project(ThePlazza LANGUAGES CXX)
 option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -13,6 +14,7 @@ set(SRC
         src/Kitchen/Stock.cpp
         src/Pizza/Pizza.cpp
         src/Shell/Shell.cpp
+        src/Reception.cpp
 )
 
 set(TESTS_SRC
