@@ -12,6 +12,7 @@ set(SRC
         src/Kitchen/Kitchen.cpp
         src/Kitchen/Stock.cpp
         src/Pizza/Pizza.cpp
+)
 
 set(TESTS_SRC
     tests/test.cpp
@@ -56,5 +57,5 @@ add_test(NAME unit_tests COMMAND unit_tests)
 if (ENABLE_ASAN)
     add_compile_options(${ASAN_FLAGS})
     add_link_options(${ASAN_FLAGS})
-endif ()
+endif()
 
