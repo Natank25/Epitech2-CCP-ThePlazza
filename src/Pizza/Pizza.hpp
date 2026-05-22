@@ -26,6 +26,6 @@ namespace plazza {
         PizzaSize size;
         std::string pizzaName;
     };
-}
+} // namespace plazza
 
 #endif //PIZZA_HPP

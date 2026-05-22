@@ -24,6 +24,6 @@ namespace plazza {
 
         std::map<std::string, std::atomic<size_t>> _ingredients;
     };
-}
+} // namespace plazza
 
 #endif //STOCK_HPP

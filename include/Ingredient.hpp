@@ -7,11 +7,12 @@
 
 #ifndef INGREDIENT_HPP
     #define INGREDIENT_HPP
+    #include <string>
 
 namespace plazza {
     struct Ingredient {
-        std::string name;
-        std::string imagePath;
+        std::string name {};
+        std::string imagePath {};
     };
 
     static const std::string TOMATO_PATH{"assets/Tomato.png"};
@@ -34,6 +35,6 @@ namespace plazza {
     static const Ingredient GOAT_CHEESE = {"goat cheese", GOAT_CHEESE_PATH};
     static const Ingredient CHIEF_LOVE = {"chief love", "TODO"};
 
-}
+} // namespace plazza
 
-#endif //INGREDIENT_HPP
+#endif // INGREDIENT_HPP
