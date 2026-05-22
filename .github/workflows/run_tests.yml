@@ -15,6 +15,8 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    container:
+      image: epitechcontent/epitest-docker:latest
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v5
@@ -24,8 +26,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          /usr/bin/cmake -S . -B build -DENABLE_ASAN=ON
-          /usr/bin/cmake --build build -- -j
+          cmake -S . -B build -DENABLE_ASAN=ON
+          cmake --build build -- -j
       - name: "Validate expected executables"
         shell: bash
         run: |
@@ -87,5 +89,5 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          /usr/bin/cmake --build build --target unit_tests
+          cmake --build build --target unit_tests
           /usr/bin/ctest --test-dir build --output-on-failure
