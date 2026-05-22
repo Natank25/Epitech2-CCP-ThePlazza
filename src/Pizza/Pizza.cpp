@@ -12,4 +12,4 @@
 namespace plazza {
     Pizza::Pizza(std::vector<Ingredient> ingredients, double timeToCook) :
     _ingredients(std::move(ingredients)), _timeToCook(timeToCook)  {}
-}
+} // namespace plazza
