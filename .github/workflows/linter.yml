@@ -9,7 +9,9 @@ on:
 
 jobs:
   linter:
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
+    container:
+      image: epitechcontent/epitest-docker:latest
     permissions:
       contents: write
       pull-requests: write
