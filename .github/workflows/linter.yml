@@ -28,7 +28,7 @@ jobs:
           style: 'file'
           tidy-checks: ''
           database: 'build'
-          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+          thread-comments: 'update'
           extra-args: '-std=c++20 -Wall'
           step-summary: 'true'
           tidy-review: 'true'
