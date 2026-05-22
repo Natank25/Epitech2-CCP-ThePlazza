@@ -25,6 +25,6 @@ namespace plazza {
         std::queue<PizzaOrder> _orders;
         Stock _stock;
     };
-}
+} // namespace plazza
 
 #endif //KITCHEN_HPP

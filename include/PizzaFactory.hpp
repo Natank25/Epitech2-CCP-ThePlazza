@@ -50,12 +50,13 @@ namespace plazza {
     };
 
     using CreatePizza = std::function<Pizza()>;
-    static const std::unordered_map<std::string, CreatePizza> BUILTIN_PIZZAS_FACTORY = {
-        {"Margarita", []() { return Pizza(MARGARITA_INGREDIENTS, 1000); }},
-        {"Regina", []() { return Pizza(REGINA_INGREDIENTS, 2000); }},
-        {"Americana", []() { return Pizza(AMERICANA_INGREDIENTS, 2000); }},
-        {"Fantasia", []() { return Pizza(FANTASIA_INGREDIENTS, 4000); }}
-    };
+    static const std::unordered_map<std::string, CreatePizza>
+        BUILTIN_PIZZAS_FACTORY = {
+            {"Margarita", [](){ return Pizza(MARGARITA_INGREDIENTS, 1000); }},
+            {"Regina", []() { return Pizza(REGINA_INGREDIENTS, 2000); }},
+            {"Americana", []() { return Pizza(AMERICANA_INGREDIENTS, 2000); }},
+            {"Fantasia", []() { return Pizza(FANTASIA_INGREDIENTS, 4000); }}
+        };
 }
 
-#endif //PIZZAFACTORY_HPP
+#endif // PIZZAFACTORY_HPP

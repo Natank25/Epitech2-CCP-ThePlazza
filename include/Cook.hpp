@@ -14,6 +14,6 @@ namespace plazza {
     private:
         std::thread _thread;
     };
-}
+} // namespace plazza
 
-#endif //COOK_HPP
+#endif // COOK_HPP

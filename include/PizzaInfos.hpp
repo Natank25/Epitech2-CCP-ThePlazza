@@ -28,4 +28,4 @@ namespace plazza {
 
 
 
-#endif //PIZZAINFOS_HPP
+#endif // PIZZAINFOS_HPP
