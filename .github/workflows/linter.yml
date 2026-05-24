@@ -16,7 +16,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: "Generate compilation_command.json"
         run: |
           cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=1 . -G 'Unix Makefiles'
@@ -27,7 +27,7 @@ jobs:
         with:
           style: 'file'
           tidy-checks: ''
-          database: 'build'
+          #database: 'build'
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
           extra-args: '-std=c++20 -Wall'
           step-summary: 'true'

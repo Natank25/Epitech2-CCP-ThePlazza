@@ -20,7 +20,7 @@ jobs:
       image: epitechcontent/epitest-docker:latest
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: "Build"
         timeout-minutes: 2
         shell: bash
