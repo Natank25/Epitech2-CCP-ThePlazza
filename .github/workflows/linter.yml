@@ -33,17 +33,34 @@ jobs:
           step-summary: 'true'
           tidy-review: 'true'
           format-review: 'true'
-      - name: Debug clang-format on failing file
+      - name: Debug clang-format on PR
         run: |
           set -o pipefail
+          echo "GIT INFO"
+          git rev-parse --abbrev-ref HEAD || true
+          git rev-parse HEAD || true
+          git log -1 --stat || true
+          echo "--- ls -la ---"
+          ls -la include/Ingredient.hpp || true
+      
+          echo
+          echo "clang-format versions available:"
+          /usr/bin/clang-format-20 --version || true
+          /__w/_actions/cpp-linter/cpp-linter-action/v2/.venv/bin/clang-format --version || true
+      
+          echo
+          echo "Run clang-format as the action does and capture stderr/stdout"
           /usr/bin/clang-format-20 -style=file include/Ingredient.hpp > /tmp/clang_fmt_out 2> /tmp/clang_fmt_err || {
-            echo "clang-format failed with exit code $?"
+            echo "clang-format-20 exit $?"
             echo "=== stderr ==="
-            sed -n '1,200p' /tmp/clang_fmt_err
-            echo "=== head of file ==="
-            sed -n '1,200p' include/Ingredient.hpp
+            sed -n '1,200p' /tmp/clang_fmt_err || true
+            echo "=== head of file (first 200 lines) ==="
+            sed -n '1,200p' include/Ingredient.hpp || true
+            echo "=== hexdump (first 256 bytes) ==="
+            hexdump -C -n 256 include/Ingredient.hpp || true
             exit 1
           }
+          echo "clang-format-20 exited 0"
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1
