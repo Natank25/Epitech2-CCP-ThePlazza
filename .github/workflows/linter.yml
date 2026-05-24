@@ -33,6 +33,17 @@ jobs:
           step-summary: 'true'
           tidy-review: 'true'
           format-review: 'true'
+      - name: Debug clang-format on failing file
+        run: |
+          set -o pipefail
+          /usr/bin/clang-format-20 -style=file include/Ingredient.hpp > /tmp/clang_fmt_out 2> /tmp/clang_fmt_err || {
+            echo "clang-format failed with exit code $?"
+            echo "=== stderr ==="
+            sed -n '1,200p' /tmp/clang_fmt_err
+            echo "=== head of file ==="
+            sed -n '1,200p' include/Ingredient.hpp
+            exit 1
+          }
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1

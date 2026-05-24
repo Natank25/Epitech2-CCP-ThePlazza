@@ -31,7 +31,7 @@ add_executable(unit_tests EXCLUDE_FROM_ALL
 )
 
 target_include_directories(unit_tests PRIVATE
-    ../include
+    include
     src
 )
 
