@@ -11,4 +11,7 @@
 Test(test, test)
 {
     cr_assert_eq(true, true);
+    int v;
+
+    v     =   3;
 }
