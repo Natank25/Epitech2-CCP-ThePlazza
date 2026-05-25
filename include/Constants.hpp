@@ -7,8 +7,8 @@
 
 #ifndef CONSTANTS_HPP
     #define CONSTANTS_HPP
-namespace plazza  {
+namespace plazza {
     constexpr int EPI_SUCCESS = 0;
     constexpr int EPI_FAILURE = 84;
-}
-#endif
+} // namespace plazza
+#endif // CONSTANTS_HPP

@@ -13,13 +13,14 @@ on:
       - ready_for_review
 
 jobs:
-  build:
+  run_tests:
+    name: "Run tests"
     runs-on: self-hosted
     container:
       image: epitechcontent/epitest-docker:latest
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: "Build"
         timeout-minutes: 2
         shell: bash
