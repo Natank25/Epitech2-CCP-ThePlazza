@@ -5,11 +5,23 @@
 ** DESCRIPTION
 */
 
+#include <deque>
+#include <iostream>
+#include <ostream>
+
 #include "Constants.hpp"
+#include "Shell/Shell.hpp"
 
-
-int main(int argc, char **argv)
+int main(int ac, char **av)
 {
-    // hello
+    std::vector<std::string> args;
+    for (;*av != nullptr; ++av)
+        args.emplace_back(*av);
+    try {
+        plazza::Shell s(args);
+    } catch (std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        return plazza::EPI_FAILURE;
+    }
     return plazza::EPI_SUCCESS;
 }
