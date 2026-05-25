@@ -1,0 +1,14 @@
+name: Debug CI
+
+on: workflow_dispatch
+
+jobs:
+  debug:
+    runs-on: self-hosted
+    container:
+      image: epitechcontent/epitest-docker@sha256:3455e1d51fed8f9ba0c49720c9aecbff2a84e2254cc1bf3a20f11f4a4b3a9ed9
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
