@@ -9,6 +9,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(ASAN_FLAGS -fsanitize=address -fno-omit-frame-pointer)
 
 set(SRC
+        src/Kitchen/Kitchen.cpp
+        src/Kitchen/Stock.cpp
+        src/Pizza/Pizza.cpp
 )
 
 set(TESTS_SRC
@@ -28,7 +31,7 @@ add_executable(unit_tests EXCLUDE_FROM_ALL
 )
 
 target_include_directories(unit_tests PRIVATE
-    ../include
+    include
     src
 )
 
@@ -54,5 +57,5 @@ add_test(NAME unit_tests COMMAND unit_tests)
 if (ENABLE_ASAN)
     add_compile_options(${ASAN_FLAGS})
     add_link_options(${ASAN_FLAGS})
-endif ()
+endif()
 
