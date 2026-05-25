@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2026
 ** ThePlazza
 ** File description:
-** DESCRIPTION
+** Process
 */
 
 #ifndef PROCESS_HPP
