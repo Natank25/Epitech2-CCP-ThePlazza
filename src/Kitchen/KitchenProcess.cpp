@@ -20,7 +20,7 @@ namespace plazza {
     {
     }
 
-    int KitchenProcess::kitchenLoop(NamedPipe toReception, NamedPipe toKitchen,
+    int KitchenProcess::kitchenLoop(NamedPipe toReception, const NamedPipe &toKitchen,
         std::size_t nbCooks, int refillTimeMs, double multiplier)
     {
         Kitchen kitchen(refillTimeMs, multiplier, nbCooks);

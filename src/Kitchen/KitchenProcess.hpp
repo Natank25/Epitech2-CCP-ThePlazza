@@ -17,15 +17,9 @@ namespace plazza {
         KitchenProcess(std::size_t nbCooks, int refillTimeMs,
             double multiplier);
 
-        bool isFull() const;
-        void enqueue(const PizzaOrder &order);
-
     private:
-        static int kitchenLoop(NamedPipe toReception, NamedPipe toKitchen,
-            std::size_t nbCooks,
-            int refillTimeMs,
-            double multiplier
-        );
+        static int kitchenLoop(NamedPipe toReception, const NamedPipe& toKitchen,
+            std::size_t nbCooks, int refillTimeMs, double multiplier);
 
         static std::string createTempFileName();
 

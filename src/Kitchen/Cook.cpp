@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2026
 ** ThePlazza
 ** File description:
-** Cook implementation
+** ${descriptor}
 */
 
 #include <thread>
