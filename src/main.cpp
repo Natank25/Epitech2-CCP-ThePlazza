@@ -6,10 +6,9 @@
 */
 
 #include "Constants.hpp"
-
+#include "Reception.hpp"
 
 int main(int argc, char **argv)
 {
-    // hello
     return plazza::EPI_SUCCESS;
 }
