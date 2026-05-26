@@ -47,6 +47,7 @@ jobs:
           step-summary: 'true'
           tidy-review: 'true'
           format-review: 'true'
+          version: '22'
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1
