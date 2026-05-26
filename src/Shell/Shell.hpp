@@ -15,6 +15,8 @@ namespace plazza {
     public:
         explicit Shell(std::vector<std::string> const &args);
 
+        [[nodiscard]] int executeShell() const;
+
         class InvalidArgs : public std::exception {
         public:
             explicit InvalidArgs(const std::string &msg);
@@ -24,10 +26,18 @@ namespace plazza {
             std::string _msg;
         };
 
+        [[nodiscard]] bool getExitShell() const;
+        void exitShell();
+
+        [[nodiscard]] unsigned int getRefillTime() const;
+        [[nodiscard]] unsigned int getNbCooks() const;
+        [[nodiscard]] double getCookingMulti() const;
+
     private:
         double _cookingMulti;
         unsigned int _nbCooks;
         unsigned int _refillTime;
+        bool _exitShell;
     };
 }
 #endif // SHELL_HPP
