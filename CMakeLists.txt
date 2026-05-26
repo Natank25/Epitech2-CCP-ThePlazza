@@ -15,8 +15,13 @@ set(SRC
         src/Kitchen/KitchenProcess.cpp
         src/Kitchen/Stock.cpp
         src/Pizza/Pizza.cpp
+        src/Pizza/PizzaFactory.cpp
+        src/Pizza/PizzaInfos.cpp
         src/Shell/Shell.cpp
         src/Reception.cpp
+        src/IPC/NamedPipe.cpp
+        src/IPC/Process.cpp
+        src/Kitchen/Cook.cpp
 )
 
 set(TESTS_SRC

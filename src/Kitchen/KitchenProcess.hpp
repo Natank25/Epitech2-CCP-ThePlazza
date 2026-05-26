@@ -2,22 +2,33 @@
 ** EPITECH PROJECT, 2026
 ** ThePlazza
 ** File description:
-** DESCRIPTION
+ ** DESCRIPTION
 */
 
 #ifndef KITCHENPROCESS_HPP
     #define KITCHENPROCESS_HPP
     #include "../IPC/NamedPipe.hpp"
     #include "../IPC/Process.hpp"
+    #include "../Pizza/Pizza.hpp"
 
 namespace plazza {
     class KitchenProcess {
     public:
-        KitchenProcess();
+        KitchenProcess(std::size_t nbCooks, int refillTimeMs,
+            double multiplier);
 
-        static int kitchenLoop(NamedPipe toReception, NamedPipe toKitchen);
-        static std::string createTempFileName();
+        bool isFull() const;
+        void enqueue(const PizzaOrder &order);
+
     private:
+        static int kitchenLoop(NamedPipe toReception, NamedPipe toKitchen,
+            std::size_t nbCooks,
+            int refillTimeMs,
+            double multiplier
+        );
+
+        static std::string createTempFileName();
+
         std::string _namedPipeName;
         NamedPipe _toReception;
         NamedPipe _toKitchen;
@@ -25,6 +36,6 @@ namespace plazza {
 
         static constexpr auto DEFAULT_TEMP_NAME = "/tmp/PlazzaKitchenNum";
     };
-} // plazza
+} // namespace plazza
 
 #endif
