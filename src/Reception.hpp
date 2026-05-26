@@ -38,8 +38,6 @@ namespace plazza {
         std::unordered_map<PizzaOrder, size_t, PizzaOrderHasher> _orders;
         static constexpr char ORDER_SEPARATOR = ';';
         static constexpr char PIZZA_COUNT_SYMBOL = 'x';
-
-        std::vector<Process>
     };
 }
 #endif
