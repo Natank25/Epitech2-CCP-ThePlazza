@@ -35,7 +35,7 @@ namespace plazza {
                 "Third argument is not a valid unsigned int");
     }
 
-    int Shell::executeShell() const
+    int Shell::executeShell()
     {
         std::string input;
 
@@ -44,6 +44,8 @@ namespace plazza {
             getline(std::cin, input);
             if (input.empty())
                 continue;
+            this->_reception.parseLine(input);
+            this->_reception.sendOrders();
         }
         return EPI_SUCCESS;
     }

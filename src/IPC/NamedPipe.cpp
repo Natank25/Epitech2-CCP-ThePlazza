@@ -7,9 +7,10 @@
 
 #include "NamedPipe.hpp"
 
+#include <cerrno>
 #include <cstring>
+#include <utility>
 #include <unistd.h>
-#include <sys/stat.h>
 
 namespace plazza {
     NamedPipe::FifoException::FifoException(const std::string &message) :
@@ -37,21 +38,21 @@ namespace plazza {
         return this->_path;
     }
 
-    std::ifstream NamedPipe::getInputStream() const
+    void NamedPipe::openRead()
     {
-        std::ifstream stream(this->_path);
-        if (!stream)
-            throw FifoException(std::string("Failed to open input stream: ") +
+        _readStream.open(this->_path);
+        if (!_readStream.is_open())
+            throw FifoException(std::string("Failed to open read stream: ") +
                                 std::strerror(errno));
-        return stream;
     }
 
-    std::ofstream NamedPipe::getOutputStream() const
+    void NamedPipe::openWrite()
     {
-        std::ofstream stream(this->_path);
-        if (!stream)
-            throw FifoException(std::string("Failed to open output stream: ") +
+        _writeStream.open(this->_path);
+        if (!_writeStream.is_open())
+            throw FifoException(std::string("Failed to open write stream: ") +
                                 std::strerror(errno));
-        return stream;
     }
 } // plazza
+
+

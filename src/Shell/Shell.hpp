@@ -10,12 +10,14 @@
     #include <vector>
     #include <string>
 
+    #include "../Reception.hpp"
+
 namespace plazza {
     class Shell {
     public:
         explicit Shell(std::vector<std::string> const &args);
 
-        [[nodiscard]] int executeShell() const;
+        [[nodiscard]] int executeShell();
 
         class InvalidArgs : public std::exception {
         public:
@@ -38,6 +40,7 @@ namespace plazza {
         unsigned int _nbCooks;
         unsigned int _refillTime;
         bool _exitShell;
+        Reception _reception;
     };
 } // namespace plazza
 #endif // SHELL_HPP

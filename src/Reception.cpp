@@ -10,6 +10,8 @@
 
 #include "Reception.hpp"
 
+#include <fstream>
+
 #include "Pizza/PizzaFactory.hpp"
 
 namespace plazza {
@@ -40,7 +42,9 @@ namespace plazza {
 
     void Reception::sendOrders()
     {
-
+        for (auto order : this->_orders) {
+            this->sendOrder(order);
+        }
     }
 
     std::pair<PizzaOrder, size_t> Reception::parseSingleOrder(
@@ -71,5 +75,12 @@ namespace plazza {
             stream.setstate(std::ios::badbit);
         else
             stream >> pizzaCount;
+    }
+
+    void Reception::sendOrder(decltype(_orders)::value_type &order)
+    {
+        for (auto &kitchen : this->_kitchens) {
+            
+        }
     }
 }
