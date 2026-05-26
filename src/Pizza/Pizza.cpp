@@ -5,11 +5,10 @@
 ** ${descriptor}
 */
 
-#include "Pizza.hpp"
-
 #include <ranges>
 #include <utility>
 
+#include "Pizza.hpp"
 #include "PizzaFactory.hpp"
 
 namespace plazza {
@@ -17,6 +16,16 @@ namespace plazza {
         _ingredients(std::move(ingredients)),
         _timeToCook(timeToCook)
     {
+    }
+
+    std::vector<Ingredient> Pizza::getIngredients()
+    {
+        return _ingredients;
+    }
+
+    double Pizza::getTimeToCook() const
+    {
+        return _timeToCook;
     }
 
     std::size_t PizzaOrderHasher::operator()(const PizzaOrder &order) const
