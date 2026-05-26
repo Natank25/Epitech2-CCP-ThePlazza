@@ -15,12 +15,12 @@
 int main(int ac, char **av)
 {
     std::vector<std::string> args;
-    for (;*av != nullptr; ++av)
+    for (; *av != nullptr; ++av)
         args.emplace_back(*av);
     try {
         plazza::Shell s(args);
         return s.executeShell();
-    } catch (std::exception& e) {
+    } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
         return plazza::EPI_FAILURE;
     }

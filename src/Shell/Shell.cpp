@@ -14,10 +14,7 @@
 
 namespace plazza {
     Shell::Shell(std::vector<std::string> const &args) :
-        _cookingMulti(1.0),
-        _nbCooks(5),
-        _refillTime(1000),
-        _exitShell(false)
+        _cookingMulti(1.0), _nbCooks(5), _refillTime(1000), _exitShell(false)
     {
         if (args.size() != 4)
             throw InvalidArgs("Invalid number of arguments.");
@@ -28,11 +25,14 @@ namespace plazza {
         std::istringstream nbCooksSs(args[2]);
         nbCooksSs >> _nbCooks;
         if (!nbCooksSs || !nbCooksSs.eof() || nbCooksSs.str().starts_with("-"))
-            throw std::runtime_error("Second argument is not a valid unsigned int");
+            throw std::runtime_error(
+                "Second argument is not a valid unsigned int");
         std::istringstream refillTimeSs(args[3]);
         refillTimeSs >> _refillTime;
-        if (!refillTimeSs || !refillTimeSs.eof() || refillTimeSs.str().starts_with("-"))
-            throw std::runtime_error("Third argument is not a valid unsigned int");
+        if (!refillTimeSs || !refillTimeSs.eof() ||
+            refillTimeSs.str().starts_with("-"))
+            throw std::runtime_error(
+                "Third argument is not a valid unsigned int");
     }
 
     int Shell::executeShell() const
@@ -53,7 +53,7 @@ namespace plazza {
         _msg = msg;
     }
 
-    const char * Shell::InvalidArgs::what() const noexcept
+    const char *Shell::InvalidArgs::what() const noexcept
     {
         return _msg.c_str();
     }
@@ -78,8 +78,5 @@ namespace plazza {
         return _nbCooks;
     }
 
-    double Shell::getCookingMulti() const
-    {
-        return _cookingMulti;
-    }
-} // plazza
+    double Shell::getCookingMulti() const { return _cookingMulti; }
+} // namespace plazza

@@ -8,7 +8,7 @@
 #ifndef SHELL_HPP
     #define SHELL_HPP
     #include <vector>
-    #include <string>
+    #include <vector>
 
 namespace plazza {
     class Shell {
@@ -39,5 +39,5 @@ namespace plazza {
         unsigned int _refillTime;
         bool _exitShell;
     };
-}
+} // namespace plazza
 #endif // SHELL_HPP
