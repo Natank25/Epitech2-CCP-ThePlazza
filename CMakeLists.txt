@@ -18,6 +18,7 @@ set(SRC
         src/Pizza/PizzaInfos.cpp
         src/IPC/Process.cpp
         src/IPC/NamedPipe.cpp
+        src/Shell/Shell.cpp
 )
 
 set(TESTS_SRC
