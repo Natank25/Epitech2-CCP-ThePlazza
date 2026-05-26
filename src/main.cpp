@@ -14,9 +14,8 @@
 
 int main(int ac, char **av)
 {
-    std::vector<std::string> args;
-    for (; *av != nullptr; ++av)
-        args.emplace_back(*av);
+    std::vector<std::string> args(av, av + ac);
+
     try {
         plazza::Shell s(args);
         return s.executeShell();
@@ -24,5 +23,4 @@ int main(int ac, char **av)
         std::cerr << e.what() << std::endl;
         return plazza::EPI_FAILURE;
     }
-    return plazza::EPI_SUCCESS;
 }
