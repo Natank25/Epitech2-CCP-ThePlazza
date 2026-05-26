@@ -8,7 +8,7 @@
 #ifndef SHELL_HPP
     #define SHELL_HPP
     #include <vector>
-    #include <vector>
+    #include <string>
 
 namespace plazza {
     class Shell {
