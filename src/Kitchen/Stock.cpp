@@ -5,40 +5,44 @@
 ** ${descriptor}
 */
 
+#include <ranges>
 #include "Stock.hpp"
 
-#include <ranges>
+#include <mutex>
+
+#include "Ingredient.hpp"
 
 namespace plazza {
+    Stock::Stock()
+    {
+        _ingredients = {
+            {DOUGH.name, 5},
+            {TOMATO.name, 5},
+            {GRUYERE.name, 5},
+            {HAM.name, 5},
+            {MUSHROOMS.name, 5},
+            {STEAK.name, 5},
+            {EGGPLANT.name, 5},
+            {GOAT_CHEESE.name, 5},
+            {CHIEF_LOVE.name, 5}
+        };
+    }
+
     void Stock::refillIngredients()
-    {
-        for (auto &elem: _ingredients | std::views::values) {
-            elem += 1;
+    { {
+            std::unique_lock lock(_mutex);
+            for (auto &[_, qty]: _ingredients)
+                qty += 1;
         }
+        _cv.notify_all();
     }
 
-    bool Stock::removeIngredientIfExists(unsigned int quantity,
-        std::pair<std::string const, std::atomic<unsigned long>> &elem)
+    bool Stock::retrieveIngredient(Ingredient const &ingredient, unsigned int quantity)
     {
-        bool result = false;
-
-        if (elem.second >= quantity) {
-            elem.second -= quantity;
-            result = true;
-        }
-        return result;
-    }
-
-    bool Stock::retrieveIngredient(const std::string &type, unsigned int quantity)
-    {
-        bool result = false;
-
-        for (auto &elem: _ingredients) {
-            if (elem.first == type) {
-                result = removeIngredientIfExists(quantity, elem);
-                break;
-            }
-        }
-        return result;
+        std::unique_lock lock(_mutex);
+        _cv.wait(lock, [&] {
+            return _ingredients.at(ingredient.name) >= quantity;});
+        _ingredients.at(ingredient.name) -= quantity;
+        return true;
     }
 }

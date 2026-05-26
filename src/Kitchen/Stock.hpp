@@ -7,22 +7,23 @@
 
 #ifndef STOCK_HPP
     #define STOCK_HPP
-    #include <atomic>
-    #include <map>
-    #include <string>
+    #include <mutex>
+    #include <condition_variable>
+    #include <unordered_map>
+    #include "Ingredient.hpp"
 
 namespace plazza {
     class Stock {
     public:
-        void refillIngredients();
+        Stock();
 
-        bool retrieveIngredient(const std::string& type, unsigned int quantity);
+        void refillIngredients();
+        bool retrieveIngredient(Ingredient const &ingredient, unsigned int quantity);
 
     private:
-        static bool removeIngredientIfExists(unsigned int quantity,
-            std::pair<std::string const, std::atomic<unsigned long>> &elem);
-
-        std::map<std::string, std::atomic<size_t>> _ingredients;
+        std::unordered_map<std::string, unsigned int> _ingredients;
+        std::mutex _mutex;
+        std::condition_variable _cv;
     };
 } // namespace plazza
 
