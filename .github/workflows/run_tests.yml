@@ -15,7 +15,7 @@ on:
 jobs:
   run_tests:
     name: "Run tests"
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container:
       image: epitechcontent/epitest-docker:latest
     steps:
