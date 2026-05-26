@@ -11,6 +11,7 @@
     #include <string>
     #include <unordered_map>
 
+    #include "IPC/Process.hpp"
     #include "Pizza/Pizza.hpp"
 
 namespace plazza {
@@ -27,13 +28,18 @@ namespace plazza {
     public:
         void parseLine(const std::string &line);
 
-        static std::pair<PizzaOrder, size_t> parseSingleOrder(const std::string &orderString);
+        void sendOrders();
+
     private:
+        static std::pair<PizzaOrder, size_t> parseSingleOrder(const std::string &orderString);
+
         static void getPizzaCount(std::istream &stream, size_t &pizzaCount);
 
         std::unordered_map<PizzaOrder, size_t, PizzaOrderHasher> _orders;
         static constexpr char ORDER_SEPARATOR = ';';
         static constexpr char PIZZA_COUNT_SYMBOL = 'x';
+
+        std::vector<Process>
     };
 }
 #endif

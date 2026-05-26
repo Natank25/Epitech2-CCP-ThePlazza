@@ -28,7 +28,6 @@ namespace plazza {
         std::istringstream iss(line);
         std::string order;
 
-
         if (line.ends_with(';'))
             throw InvalidOrderException("Last order cannot be empty");
         while (std::getline(iss, order, ORDER_SEPARATOR)) {
@@ -37,6 +36,11 @@ namespace plazza {
         }
         for (const auto &[pizzaOrder, count] : this->_orders)
             std::cout << pizzaOrder.pizzaName << pizzaOrder << " x" << count << std::endl;
+    }
+
+    void Reception::sendOrders()
+    {
+
     }
 
     std::pair<PizzaOrder, size_t> Reception::parseSingleOrder(

@@ -11,6 +11,7 @@ set(ASAN_FLAGS -fsanitize=address -fno-omit-frame-pointer)
 set(SRC
         src/Reception.cpp
         src/Kitchen/Kitchen.cpp
+        src/Kitchen/KitchenProcess.cpp
         src/Kitchen/Stock.cpp
         src/Pizza/Pizza.cpp
         src/Pizza/PizzaFactory.cpp

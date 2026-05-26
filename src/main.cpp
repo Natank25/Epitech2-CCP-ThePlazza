@@ -6,7 +6,6 @@
 */
 
 #include "Constants.hpp"
-#include "Reception.hpp"
 
 int main(int argc, char **argv)
 {
