@@ -17,17 +17,18 @@ namespace plazza {
     class SafeQueue {
     public:
         void push(T item)
-        { {
+        {
+            {
                 std::unique_lock lock(_mutex);
                 _queue.push(std::move(item));
             }
-            _cv.notify_one();
+            _itemAvailable.notify_one();
         }
 
         T pop()
         {
             std::unique_lock lock(_mutex);
-            _cv.wait(lock, [this] { return !_queue.empty() || _stop; });
+            _itemAvailable.wait(lock, [this] { return !_queue.empty() || _stop; });
             if (_stop && _queue.empty())
                 throw std::runtime_error("SafeQueue stopped");
             T item = std::move(_queue.front());
@@ -36,11 +37,12 @@ namespace plazza {
         }
 
         void stop()
-        { {
+        {
+            {
                 std::unique_lock lock(_mutex);
                 _stop = true;
             }
-            _cv.notify_all();
+            _itemAvailable.notify_all();
         }
 
         std::size_t size() const
@@ -58,8 +60,8 @@ namespace plazza {
     private:
         std::queue<T> _queue;
         mutable std::mutex _mutex;
-        std::condition_variable _cv;
-        bool _stop{false};
+        std::condition_variable _itemAvailable;
+        bool _stop = false;
     };
 } // namespace plazza
 
