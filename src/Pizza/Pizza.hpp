@@ -18,6 +18,8 @@ namespace plazza {
     public:
         Pizza(std::vector<Ingredient> ingredients, double timeToCook);
 
+        [[nodiscard]] std::vector<Ingredient> getIngredients();
+        [[nodiscard]] double getTimeToCook() const;
     private:
         std::vector<Ingredient> _ingredients;
         double _timeToCook;

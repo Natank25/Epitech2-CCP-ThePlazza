@@ -9,18 +9,24 @@
     #define KITCHENPROCESS_HPP
     #include "../IPC/NamedPipe.hpp"
     #include "../IPC/Process.hpp"
+    #include "../Pizza/Pizza.hpp"
 
 namespace plazza {
     class KitchenProcess {
     public:
+        KitchenProcess(std::size_t nbCooks, int refillTimeMs,
+            double multiplier);
         KitchenProcess();
 
-        static int kitchenLoop(NamedPipe &toReception, NamedPipe &toKitchen);
-        static std::string createTempFileName();
         [[nodiscard]] NamedPipe &getToReception();
         [[nodiscard]] NamedPipe &getToKitchen();
 
     private:
+        static int kitchenLoop(NamedPipe toReception, const NamedPipe& toKitchen,
+            std::size_t nbCooks, int refillTimeMs, double multiplier);
+
+        static std::string createTempFileName();
+
         std::string _namedPipeName;
         NamedPipe _toReception;
         NamedPipe _toKitchen;
@@ -31,6 +37,6 @@ namespace plazza {
         static constexpr auto RECEPTION_PIPE_SUFFIX = "ToReception";
         static constexpr auto KITCHEN_PIPE_SUFFIX = "ToKitchen";
     };
-} // plazza
+} // namespace plazza
 
 #endif

@@ -80,7 +80,7 @@ namespace plazza {
     void Reception::sendOrder(decltype(_orders)::value_type &order)
     {
         for (auto &kitchen : this->_kitchens) {
-            
+
         }
     }
 }

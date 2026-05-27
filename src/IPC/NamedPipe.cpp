@@ -11,6 +11,7 @@
 #include <cstring>
 #include <utility>
 #include <unistd.h>
+#include <sys/stat.h>
 
 namespace plazza {
     NamedPipe::FifoException::FifoException(const std::string &message) :
@@ -54,5 +55,3 @@ namespace plazza {
                                 std::strerror(errno));
     }
 } // plazza
-
-
