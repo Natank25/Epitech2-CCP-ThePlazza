@@ -49,7 +49,7 @@ namespace plazza {
         using CreatePizza = std::function<Pizza()>;
 
         static Pizza createPizza(const std::string &name);
-        static bool doesPizzaExists(const std::string &name);
+        static bool doesPizzaExists(std::string name);
     private:
         static const std::unordered_map<std::string, CreatePizza>
             BUILTIN_PIZZAS_FACTORY;;

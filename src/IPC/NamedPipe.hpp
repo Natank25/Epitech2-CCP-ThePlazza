@@ -7,18 +7,23 @@
 
 #ifndef NAMEDPIPE_HPP
     #define NAMEDPIPE_HPP
-    #include <array>
-    #include <fstream>
+    #include <iomanip>
     #include <sstream>
     #include <stdexcept>
     #include <string>
     #include <unistd.h>
-    #include <sys/stat.h>
+    #include <iostream>
 
 namespace plazza {
     class NamedPipe {
 
     public:
+        NamedPipe(const NamedPipe &) = delete;
+        NamedPipe &operator=(const NamedPipe &) = delete;
+
+        NamedPipe(NamedPipe &&other) noexcept;
+        NamedPipe &operator=(NamedPipe &&other) noexcept;
+
         class FifoException : public std::runtime_error {
         public:
             explicit FifoException(const std::string &message);
@@ -45,10 +50,18 @@ namespace plazza {
                 this->openRead();
             std::string buffer{};
             buffer.resize(READ_BUFFER_SIZE);
-            read(this->_readFd, buffer.data(), buffer.size());
-            std::istringstream iss(buffer);
-            iss >> value;
-            this->_readStatus = iss.fail();
+            auto charRead = read(this->_readFd, buffer.data(), buffer.size());
+            if (charRead > 0) {
+                buffer.resize(static_cast<std::size_t>(charRead));
+                while (!buffer.empty() && (buffer.back() == '\n' || buffer.back() == '\r'))
+                    buffer.pop_back();
+                std::cout << "Buffer: " << std::quoted(buffer) << std::endl;
+                std::istringstream iss(buffer);
+                iss >> value;
+                this->_readFailed = !iss;
+            } else {
+                this->_readFailed = true;
+            }
             return *this;
         }
 
@@ -58,7 +71,8 @@ namespace plazza {
         std::string _path;
         int _readFd;
         int _writeFd;
-        bool _readStatus;
+        bool _readFailed;
+        bool _ownsPath;
 
         void openRead();
         void openWrite();

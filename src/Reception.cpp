@@ -11,6 +11,7 @@
 #include "Reception.hpp"
 
 #include <fstream>
+#include <iomanip>
 
 #include "Pizza/PizzaFactory.hpp"
 
@@ -44,15 +45,13 @@ namespace plazza {
             auto [pizzaOrder, pizzaCount] = parseSingleOrder(order);
             this->_orders[pizzaOrder] += pizzaCount;
         }
-        for (const auto &[pizzaOrder, count]: this->_orders)
-            std::cout << pizzaOrder.pizzaName << pizzaOrder << " x" << count <<
-                std::endl;
     }
 
     void Reception::sendOrders()
     {
-        for (auto order: this->_orders) {
-            this->sendOrder(order);
+        for (auto &order: this->_orders) {
+            while (order.second != 0)
+                this->sendOrder(order);
         }
     }
 
@@ -66,6 +65,8 @@ namespace plazza {
             throw InvalidOrderException("Order cannot be empty");
         PizzaOrder order;
         iss >> order;
+        if (!iss)
+            throw InvalidOrderException("The name or the size is invalid.");
         if (iss.peek() != ' ')
             throw InvalidOrderException("Expected space character.");
         size_t pizzaCount;
@@ -88,18 +89,24 @@ namespace plazza {
 
     void Reception::sendOrder(decltype(_orders)::value_type &order)
     {
+        std::cout << "Trying to send order. " << order.second << " left." << std::endl;
         for (auto &kitchen: this->_kitchens) {
+            std::cout << "Trying to kitchen" << std::endl;
             kitchen.getOrders() << order.first;
-            std::string answer;
-            kitchen.getToReception() >> answer;
-            if (answer == "OK") {
-                order.second--;
-                return;
-            }
+            bool tookOrder = false;
+            if (!(kitchen.getToReception() >> tookOrder) || !tookOrder)
+                continue;
+            order.second--;
+            std::cout << "Sending order " << order.first << std::endl;
+            return;
         }
         auto &newKitchen = this->_kitchens.emplace_back(this->_numCook, this->_refillTime,
             this->_multiplier);
         newKitchen.getOrders() << order.first;
+        bool tookOrder = false;
+        if (!(newKitchen.getToReception() >> tookOrder) || !tookOrder)
+            throw std::runtime_error("New kitchen did not accept order");
         order.second--;
+        std::cout << "Sending order " << order.first << std::endl;
     }
 }

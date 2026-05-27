@@ -25,7 +25,8 @@ namespace plazza {
         _path(std::move(path)),
         _readFd(-1),
         _writeFd(-1),
-        _readStatus(false)
+        _readFailed(false),
+        _ownsPath(true)
     {
         if (mkfifo(this->_path.c_str(), mode) == -1) {
             if (errno != EEXIST)
@@ -34,9 +35,42 @@ namespace plazza {
         }
     }
 
+    NamedPipe::NamedPipe(NamedPipe &&other) noexcept :
+        _path(std::move(other._path)),
+        _readFd(std::exchange(other._readFd, -1)),
+        _writeFd(std::exchange(other._writeFd, -1)),
+        _readFailed(other._readFailed),
+        _ownsPath(std::exchange(other._ownsPath, false))
+    {
+    }
+
+    NamedPipe &NamedPipe::operator=(NamedPipe &&other) noexcept
+    {
+        if (this != &other) {
+            if (this->_readFd != -1)
+                close(this->_readFd);
+            if (this->_writeFd != -1)
+                close(this->_writeFd);
+            if (this->_ownsPath && !this->_path.empty())
+                unlink(this->_path.c_str());
+
+            this->_path = std::move(other._path);
+            this->_readFd = std::exchange(other._readFd, -1);
+            this->_writeFd = std::exchange(other._writeFd, -1);
+            this->_readFailed = other._readFailed;
+            this->_ownsPath = std::exchange(other._ownsPath, false);
+        }
+        return *this;
+    }
+
     NamedPipe::~NamedPipe()
     {
-        unlink(this->_path.c_str());
+        if (this->_readFd != -1)
+            close(this->_readFd);
+        if (this->_writeFd != -1)
+            close(this->_writeFd);
+        if (this->_ownsPath && !this->_path.empty())
+            unlink(this->_path.c_str());
     }
 
     const std::string &NamedPipe::getPath() const
@@ -46,7 +80,7 @@ namespace plazza {
 
     NamedPipe::operator bool() const
     {
-        return this->_readStatus;
+        return !this->_readFailed;
     }
 
     void NamedPipe::openRead()

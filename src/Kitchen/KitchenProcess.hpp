@@ -13,6 +13,11 @@
 namespace plazza {
     class KitchenProcess {
     public:
+        KitchenProcess(const KitchenProcess &) = delete;
+        KitchenProcess &operator=(const KitchenProcess &) = delete;
+        KitchenProcess(KitchenProcess &&) noexcept = default;
+        KitchenProcess &operator=(KitchenProcess &&) noexcept = default;
+
         KitchenProcess(std::size_t nbCooks, int refillTimeMs,
             double multiplier);
 
@@ -20,7 +25,7 @@ namespace plazza {
         [[nodiscard]] NamedPipe &getOrders();
 
     private:
-        static int kitchenLoop(KitchenProcess process,
+        static int kitchenLoop(KitchenProcess &process,
             size_t nbCooks, int refillTimeMs, double multiplier);
 
         static std::string createTempFileName();

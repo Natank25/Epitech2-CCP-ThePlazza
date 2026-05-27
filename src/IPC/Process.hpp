@@ -16,6 +16,12 @@
 namespace plazza {
     class Process {
     public:
+        Process(const Process &) = delete;
+        Process &operator=(const Process &) = delete;
+
+        Process(Process &&other) noexcept;
+        Process &operator=(Process &&other) noexcept;
+
         class FailedForkException : std::exception {
         public:
             explicit FailedForkException(int errnoValue = errno);

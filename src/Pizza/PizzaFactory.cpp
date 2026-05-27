@@ -7,6 +7,9 @@
 
 #include "PizzaFactory.hpp"
 
+#include <algorithm>
+#include <ranges>
+
 namespace plazza {
     Pizza PizzaFactory::createPizza(const std::string &name)
     {
@@ -15,16 +18,17 @@ namespace plazza {
         return BUILTIN_PIZZAS_FACTORY.at(name)();
     }
 
-    bool PizzaFactory::doesPizzaExists(const std::string &name)
+    bool PizzaFactory::doesPizzaExists(std::string name)
     {
+        std::ranges::transform(name, name.begin(), tolower);
         return BUILTIN_PIZZAS_FACTORY.contains(name);
     }
 
     const std::unordered_map<std::string, PizzaFactory::CreatePizza>
     PizzaFactory::BUILTIN_PIZZAS_FACTORY = {
-        {"Margarita", []() { return Pizza(MARGARITA_INGREDIENTS, 1000); }},
-        {"Regina", []() { return Pizza(REGINA_INGREDIENTS, 2000); }},
-        {"Americana", []() { return Pizza(AMERICANA_INGREDIENTS, 2000); }},
-        {"Fantasia", []() { return Pizza(FANTASIA_INGREDIENTS, 4000); }}
+        {"margarita", []() { return Pizza(MARGARITA_INGREDIENTS, 1000); }},
+        {"regina", []() { return Pizza(REGINA_INGREDIENTS, 2000); }},
+        {"americana", []() { return Pizza(AMERICANA_INGREDIENTS, 2000); }},
+        {"fantasia", []() { return Pizza(FANTASIA_INGREDIENTS, 4000); }}
     };
 }

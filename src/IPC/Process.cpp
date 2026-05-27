@@ -8,6 +8,7 @@
 #include "Process.hpp"
 
 #include <cstring>
+#include <utility>
 #include <sys/wait.h>
 
 namespace plazza {
@@ -24,6 +25,22 @@ namespace plazza {
     Process::Process():
         _pid(-1)
     {
+    }
+
+    Process::Process(Process &&other) noexcept:
+        _pid(std::exchange(other._pid, -1)),
+        _exitStatus(std::exchange(other._exitStatus, DEFAULT_EXIT_STATUS))
+    {
+    }
+
+    Process &Process::operator=(Process &&other) noexcept
+    {
+        if (this != &other) {
+            this->_pid = std::exchange(other._pid, -1);
+            this->_exitStatus = std::exchange(other._exitStatus,
+                DEFAULT_EXIT_STATUS);
+        }
+        return *this;
     }
 
     int Process::wait(int options)

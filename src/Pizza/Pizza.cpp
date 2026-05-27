@@ -7,7 +7,7 @@
 
 #include "Pizza.hpp"
 
-#include <ranges>
+#include <algorithm>
 #include <ranges>
 #include <utility>
 
@@ -50,7 +50,7 @@ namespace plazza {
     {
         std::string name;
         stream >> name;
-        std::transform(name.begin(), name.end(), name.begin(), tolower);
+        std::ranges::transform(name, name.begin(), tolower);
         pizzaOrder.pizzaName = name;
         if (!PizzaFactory::doesPizzaExists(pizzaOrder.pizzaName))
             stream.setstate(std::ios::badbit);
@@ -69,6 +69,6 @@ namespace plazza {
         for(const auto &[fst, snd] : PIZZA_SIZE_FROM_STR)
             if(snd == pizzaOrder.size)
                 size = fst;
-        return stream << "{" << pizzaOrder.pizzaName << " " << size << "}";
+        return stream << pizzaOrder.pizzaName << " " << size;
     }
 } // namespace plazza

@@ -18,11 +18,12 @@ namespace plazza {
         _toReception(_namedPipeName + RECEPTION_PIPE_SUFFIX),
         _orders(_namedPipeName + ORDERS_PIPE_SUFFIX),
         _pizzaReady(_namedPipeName + READY_PIZZAS_PIPE_SUFFIX),
-        _process(kitchenLoop, *this, nbCooks, refillTimeMs, multiplier)
+        _process(kitchenLoop, std::ref(*this), nbCooks, refillTimeMs, multiplier)
     {
+        std::cout << "Kreated kitchen process" << std::endl;
     }
 
-    int KitchenProcess::kitchenLoop(KitchenProcess process,
+    int KitchenProcess::kitchenLoop(KitchenProcess &process,
         size_t nbCooks, int refillTimeMs, double multiplier)
     {
         Kitchen kitchen(refillTimeMs, multiplier, nbCooks);
@@ -38,10 +39,12 @@ namespace plazza {
 
             if (!(process._orders >> order))
                 break;
+            std::cout << "Reading order: " << order << std::endl;
+            std::cout << "Kitchen is full ? : " << std::boolalpha << kitchen.isFull() << std::endl;
             if (kitchen.isFull()) {
-                process._toReception << "KO";
+                process._toReception << false;
             } else {
-                process._toReception << "OK";
+                process._toReception << true;
                 kitchen.enqueue(order);
             }
         }
