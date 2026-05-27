@@ -27,6 +27,7 @@ namespace plazza {
 
     class Reception {
     public:
+        Reception(std::size_t numCook, std::size_t refillTime, double multiplier);
         void parseLine(const std::string &line);
 
         void sendOrders();
@@ -37,12 +38,16 @@ namespace plazza {
         static void getPizzaCount(std::istream &stream, size_t &pizzaCount);
 
         std::unordered_map<PizzaOrder, size_t, PizzaOrderHasher> _orders;
+        std::size_t _numCook;
+        std::size_t _refillTime;
+        double _multiplier;
+
         static constexpr char ORDER_SEPARATOR = ';';
         static constexpr char PIZZA_COUNT_SYMBOL = 'x';
 
         std::vector<KitchenProcess> _kitchens;
 
-        void sendOrder(decltype(_orders)::value_type &pair);
+        void sendOrder(decltype(_orders)::value_type &order);
     };
 }
 #endif

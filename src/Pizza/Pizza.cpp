@@ -52,7 +52,7 @@ namespace plazza {
         stream >> name;
         std::transform(name.begin(), name.end(), name.begin(), tolower);
         pizzaOrder.pizzaName = name;
-        if (PizzaFactory::doesPizzaExists(pizzaOrder.pizzaName))
+        if (!PizzaFactory::doesPizzaExists(pizzaOrder.pizzaName))
             stream.setstate(std::ios::badbit);
         if (stream.peek() == ' ')
             stream >> pizzaOrder.size;

@@ -14,7 +14,8 @@
 
 namespace plazza {
     Shell::Shell(std::vector<std::string> const &args) :
-        _cookingMulti(1.0), _nbCooks(5), _refillTime(1000), _exitShell(false)
+        _cookingMulti(1.0), _nbCooks(5), _refillTime(1000), _exitShell(false),
+        _reception(_nbCooks, _refillTime, _cookingMulti)
     {
         if (args.size() != 4)
             throw InvalidArgs("Invalid number of arguments.");
@@ -33,6 +34,7 @@ namespace plazza {
             refillTimeSs.str().starts_with("-"))
             throw std::runtime_error(
                 "Third argument is not a valid unsigned int");
+        this->_reception = Reception(_nbCooks, _refillTime, _cookingMulti);
     }
 
     int Shell::executeShell()
@@ -44,7 +46,11 @@ namespace plazza {
             getline(std::cin, input);
             if (input.empty())
                 continue;
-            this->_reception.parseLine(input);
+            try {
+                this->_reception.parseLine(input);
+            } catch (const InvalidOrderException &e) {
+                std::cout << e.what() << std::endl;
+            }
             this->_reception.sendOrders();
         }
         return EPI_SUCCESS;

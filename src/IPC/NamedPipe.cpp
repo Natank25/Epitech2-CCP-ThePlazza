@@ -12,6 +12,8 @@
 #include <utility>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <fcntl.h>
+
 
 namespace plazza {
     NamedPipe::FifoException::FifoException(const std::string &message) :
@@ -20,7 +22,10 @@ namespace plazza {
     }
 
     NamedPipe::NamedPipe(std::string path, mode_t mode) :
-        _path(std::move(path))
+        _path(std::move(path)),
+        _readFd(-1),
+        _writeFd(-1),
+        _readStatus(false)
     {
         if (mkfifo(this->_path.c_str(), mode) == -1) {
             if (errno != EEXIST)
@@ -39,18 +44,23 @@ namespace plazza {
         return this->_path;
     }
 
+    NamedPipe::operator bool() const
+    {
+        return this->_readStatus;
+    }
+
     void NamedPipe::openRead()
     {
-        _readStream.open(this->_path);
-        if (!_readStream.is_open())
+        this->_readFd = open(this->_path.c_str(), O_RDONLY);
+        if (this->_readFd == -1)
             throw FifoException(std::string("Failed to open read stream: ") +
                                 std::strerror(errno));
     }
 
     void NamedPipe::openWrite()
     {
-        _writeStream.open(this->_path);
-        if (!_writeStream.is_open())
+        this->_writeFd = open(this->_path.c_str(), O_WRONLY);
+        if (this->_writeFd == -1)
             throw FifoException(std::string("Failed to open write stream: ") +
                                 std::strerror(errno));
     }

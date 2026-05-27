@@ -25,6 +25,14 @@ namespace plazza {
         return this->_errorMsg.c_str();
     }
 
+    Reception::Reception(std::size_t numCook, std::size_t refillTime,
+        double multiplier) :
+        _numCook(numCook),
+        _refillTime(refillTime),
+        _multiplier(multiplier)
+    {
+    }
+
     void Reception::parseLine(const std::string &line)
     {
         std::istringstream iss(line);
@@ -36,13 +44,14 @@ namespace plazza {
             auto [pizzaOrder, pizzaCount] = parseSingleOrder(order);
             this->_orders[pizzaOrder] += pizzaCount;
         }
-        for (const auto &[pizzaOrder, count] : this->_orders)
-            std::cout << pizzaOrder.pizzaName << pizzaOrder << " x" << count << std::endl;
+        for (const auto &[pizzaOrder, count]: this->_orders)
+            std::cout << pizzaOrder.pizzaName << pizzaOrder << " x" << count <<
+                std::endl;
     }
 
     void Reception::sendOrders()
     {
-        for (auto order : this->_orders) {
+        for (auto order: this->_orders) {
             this->sendOrder(order);
         }
     }
@@ -79,8 +88,18 @@ namespace plazza {
 
     void Reception::sendOrder(decltype(_orders)::value_type &order)
     {
-        for (auto &kitchen : this->_kitchens) {
-
+        for (auto &kitchen: this->_kitchens) {
+            kitchen.getOrders() << order.first;
+            std::string answer;
+            kitchen.getToReception() >> answer;
+            if (answer == "OK") {
+                order.second--;
+                return;
+            }
         }
+        auto &newKitchen = this->_kitchens.emplace_back(this->_numCook, this->_refillTime,
+            this->_multiplier);
+        newKitchen.getOrders() << order.first;
+        order.second--;
     }
 }
