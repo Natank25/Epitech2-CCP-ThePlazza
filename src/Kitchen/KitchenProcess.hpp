@@ -15,8 +15,11 @@ namespace plazza {
     public:
         KitchenProcess();
 
-        static int kitchenLoop(NamedPipe toReception, NamedPipe toKitchen);
+        static int kitchenLoop(NamedPipe &toReception, NamedPipe &toKitchen);
         static std::string createTempFileName();
+        [[nodiscard]] NamedPipe &getToReception();
+        [[nodiscard]] NamedPipe &getToKitchen();
+
     private:
         std::string _namedPipeName;
         NamedPipe _toReception;
@@ -24,6 +27,9 @@ namespace plazza {
         Process _process;
 
         static constexpr auto DEFAULT_TEMP_NAME = "/tmp/PlazzaKitchenNum";
+
+        static constexpr auto RECEPTION_PIPE_SUFFIX = "ToReception";
+        static constexpr auto KITCHEN_PIPE_SUFFIX = "ToKitchen";
     };
 } // plazza
 

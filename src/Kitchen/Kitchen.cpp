@@ -10,7 +10,7 @@
 
 namespace plazza {
     Kitchen::Kitchen(std::size_t const _numberCooks) : _timeSinceLastRefill(0),
-    _cooks(std::vector<Cook>{}), _stock(Stock()), _orders()
+    _cooks(std::vector<Cook>{}), _orders(), _stock(Stock())
     {
         _cooks.reserve(_numberCooks);
         for (int i = 0; i < _cooks.capacity(); ++i)

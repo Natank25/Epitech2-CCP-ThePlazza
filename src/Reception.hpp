@@ -12,6 +12,7 @@
     #include <unordered_map>
 
     #include "IPC/Process.hpp"
+    #include "Kitchen/KitchenProcess.hpp"
     #include "Pizza/Pizza.hpp"
 
 namespace plazza {
@@ -38,6 +39,10 @@ namespace plazza {
         std::unordered_map<PizzaOrder, size_t, PizzaOrderHasher> _orders;
         static constexpr char ORDER_SEPARATOR = ';';
         static constexpr char PIZZA_COUNT_SYMBOL = 'x';
+
+        std::vector<KitchenProcess> _kitchens;
+
+        void sendOrder(decltype(_orders)::value_type &pair);
     };
 }
 #endif
