@@ -7,8 +7,8 @@
 
 #ifndef POLLER_HPP
     #define POLLER_HPP
-    #include <vector>
     #include <sys/poll.h>
+    #include <vector>
 
 namespace plazza {
     class Poller {
@@ -21,11 +21,9 @@ namespace plazza {
 
         int poll(int timeout = -1);
 
-        const std::vector<int> &
-        getPollResult();
+        const std::vector<int> &getPollResult();
 
-        const std::vector<int> &
-        getDisconnectedFds();
+        const std::vector<int> &getDisconnectedFds();
 
         void removeFromFd(int fd);
 
@@ -37,6 +35,6 @@ namespace plazza {
         std::vector<int> _pollResults;
         std::vector<int> _disconnectedFds;
     };
-} // plazza
+} // namespace plazza
 
 #endif
