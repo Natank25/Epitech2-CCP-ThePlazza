@@ -8,11 +8,11 @@
 #ifndef NAMEDPIPE_HPP
     #define NAMEDPIPE_HPP
     #include <iomanip>
+    #include <iostream>
     #include <sstream>
     #include <stdexcept>
     #include <string>
     #include <unistd.h>
-    #include <iostream>
 
 namespace plazza {
     class NamedPipe {
@@ -35,7 +35,8 @@ namespace plazza {
 
         [[nodiscard]] const std::string &getPath() const;
 
-        NamedPipe &operator<<(auto value) {
+        NamedPipe &operator<<(auto value)
+        {
             if (_writeFd == -1)
                 this->openWrite();
             std::ostringstream oss;
@@ -45,15 +46,17 @@ namespace plazza {
             return *this;
         }
 
-        NamedPipe &operator>>(auto &value) {
+        NamedPipe &operator>>(auto &value)
+        {
             if (_readFd == -1)
                 this->openRead();
-            std::string buffer{};
+            std::string buffer {};
             buffer.resize(READ_BUFFER_SIZE);
             auto charRead = read(this->_readFd, buffer.data(), buffer.size());
             if (charRead > 0) {
                 buffer.resize(static_cast<std::size_t>(charRead));
-                while (!buffer.empty() && (buffer.back() == '\n' || buffer.back() == '\r'))
+                while (!buffer.empty() &&
+                       (buffer.back() == '\n' || buffer.back() == '\r'))
                     buffer.pop_back();
                 std::istringstream iss(buffer);
                 iss >> value;
@@ -79,6 +82,6 @@ namespace plazza {
         static constexpr mode_t DEFAULT_FIFO_MODE = 0666;
         static constexpr size_t READ_BUFFER_SIZE = 512;
     };
-} // plazza
+} // namespace plazza
 
 #endif

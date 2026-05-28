@@ -9,12 +9,13 @@ AlignOperands: true
 AlignTrailingComments: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
-AlwaysBreakAfterDefinitionReturnType: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortLambdasOnASingleLine: Inline
 AlwaysBreakAfterReturnType: None
 AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: true
-BinPackParameters: true
-BraceWrapping: 
+BinPackParameters: BinPack
+BraceWrapping:
   AfterCaseLabel: false
   AfterClass: false
   AfterControlStatement: false
@@ -34,10 +35,8 @@ BraceWrapping:
 BreakBeforeBraces: Custom
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: AfterColon
-BreakConstructorInitializersBeforeComma: false
 ColumnLimit: 80
 CompactNamespaces: false
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ContinuationIndentWidth: 4
 EmptyLineAfterAccessModifier: Never
 EmptyLineBeforeAccessModifier: LogicalBlock
@@ -68,7 +67,7 @@ SpaceBeforeAssignmentOperators: true
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: ControlStatements
-SpaceBeforeRangeBasedForLoopColon: false
+SpaceBeforeRangeBasedForLoopColon: true
 SpaceBeforeSquareBrackets: false
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 1
@@ -80,4 +79,6 @@ SpacesInSquareBrackets: false
 TabWidth: 4
 UseTab: Never
 IndentPPDirectives: Leave
+SpaceBeforeCpp11BracedList: true
+PackConstructorInitializers: NextLineOnly
 ...

@@ -10,9 +10,11 @@
 
 namespace plazza {
 
-    Kitchen::Kitchen(int refillTimeMs, double multiplier, std::size_t nbCooks)
-        : _refillTimeMs(refillTimeMs), _multiplier(multiplier),
-          _running(true), _lastActivity(std::chrono::steady_clock::now())
+    Kitchen::Kitchen(int refillTimeMs, double multiplier, std::size_t nbCooks) :
+        _refillTimeMs(refillTimeMs),
+        _multiplier(multiplier),
+        _running(true),
+        _lastActivity(std::chrono::steady_clock::now())
     {
         for (std::size_t i = 0; i < nbCooks; ++i)
             _cooks.emplace_back();
@@ -25,11 +27,11 @@ namespace plazza {
 
     void Kitchen::start()
     {
-        _threads.emplace_back([this]{ stockRefillLoop(); });
-        _threads.emplace_back([this]{ inactivityCheckLoop(); });
-        for (auto &cook : _cooks)
-            _threads.emplace_back([&cook, this]{
-                cook.cookLoop(_queue, _stock, _multiplier, _onPizzaDone);
+        _threads.emplace_back([this] { stockRefillLoop(); });
+        _threads.emplace_back([this] { inactivityCheckLoop(); });
+        for (auto &_ : _cooks)
+            _threads.emplace_back([this] {
+                Cook::cookLoop(_queue, _stock, _multiplier, _onPizzaDone);
             });
     }
 
@@ -59,13 +61,15 @@ namespace plazza {
         _running = false;
         _queue.stop();
         for (auto &t : _threads)
-            if (t.joinable()) t.join();
+            if (t.joinable())
+                t.join();
     }
 
     void Kitchen::stockRefillLoop()
     {
         while (_running) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(_refillTimeMs));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(_refillTimeMs));
             _stock.refillIngredients();
         }
     }
@@ -73,9 +77,11 @@ namespace plazza {
     void Kitchen::inactivityCheckLoop()
     {
         while (_running) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(CHECK_ACTIVITY_INTERVAL_MS));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(CHECK_ACTIVITY_INTERVAL_MS));
             auto idle = std::chrono::steady_clock::now() - _lastActivity.load();
-            if (_queue.empty() && idle >= std::chrono::seconds(INACTIVITY_CLOSE_TIME_S)) {
+            if (_queue.empty() &&
+                idle >= std::chrono::seconds(INACTIVITY_CLOSE_TIME_S)) {
                 _running = false;
                 _queue.stop();
             }

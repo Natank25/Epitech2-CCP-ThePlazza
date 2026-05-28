@@ -26,11 +26,9 @@ namespace plazza {
         return this->_errorMsg.c_str();
     }
 
-    Reception::Reception(std::size_t numCook, std::size_t refillTime,
-        double multiplier) :
-        _numCook(numCook),
-        _refillTime(refillTime),
-        _multiplier(multiplier)
+    Reception::Reception(
+        std::size_t numCook, std::size_t refillTime, double multiplier) :
+        _numCook(numCook), _refillTime(refillTime), _multiplier(multiplier)
     {
     }
 
@@ -97,12 +95,12 @@ namespace plazza {
             order.second--;
             return;
         }
-        auto &newKitchen = this->_kitchens.emplace_back(this->_numCook, this->_refillTime,
-            this->_multiplier);
+        auto &newKitchen = this->_kitchens.emplace_back(
+            this->_numCook, this->_refillTime, this->_multiplier);
         newKitchen.getOrders() << order.first;
         bool tookOrder = false;
         if (!(newKitchen.getToReception() >> tookOrder) || !tookOrder)
             throw std::runtime_error("New kitchen did not accept order");
         order.second--;
     }
-}
+} // namespace plazza
