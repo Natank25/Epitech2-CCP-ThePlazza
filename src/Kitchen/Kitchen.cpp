@@ -14,7 +14,6 @@ namespace plazza {
         : _refillTimeMs(refillTimeMs), _multiplier(multiplier),
           _running(true), _lastActivity(std::chrono::steady_clock::now())
     {
-        std::cout << "Created kitchen with " << nbCooks << " cooks" << std::endl;
         for (std::size_t i = 0; i < nbCooks; ++i)
             _cooks.emplace_back();
     }
@@ -42,7 +41,7 @@ namespace plazza {
 
     bool Kitchen::isFull() const
     {
-        return _queue.size() >= 2 * _cooks.size();
+        return _queue.size() >= _cooks.size();
     }
 
     bool Kitchen::isRunning() const

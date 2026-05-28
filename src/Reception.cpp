@@ -89,15 +89,12 @@ namespace plazza {
 
     void Reception::sendOrder(decltype(_orders)::value_type &order)
     {
-        std::cout << "Trying to send order. " << order.second << " left." << std::endl;
         for (auto &kitchen: this->_kitchens) {
-            std::cout << "Trying to kitchen" << std::endl;
             kitchen.getOrders() << order.first;
             bool tookOrder = false;
             if (!(kitchen.getToReception() >> tookOrder) || !tookOrder)
                 continue;
             order.second--;
-            std::cout << "Sending order " << order.first << std::endl;
             return;
         }
         auto &newKitchen = this->_kitchens.emplace_back(this->_numCook, this->_refillTime,
@@ -107,6 +104,5 @@ namespace plazza {
         if (!(newKitchen.getToReception() >> tookOrder) || !tookOrder)
             throw std::runtime_error("New kitchen did not accept order");
         order.second--;
-        std::cout << "Sending order " << order.first << std::endl;
     }
 }

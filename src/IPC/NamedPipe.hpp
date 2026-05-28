@@ -55,7 +55,6 @@ namespace plazza {
                 buffer.resize(static_cast<std::size_t>(charRead));
                 while (!buffer.empty() && (buffer.back() == '\n' || buffer.back() == '\r'))
                     buffer.pop_back();
-                std::cout << "Buffer: " << std::quoted(buffer) << std::endl;
                 std::istringstream iss(buffer);
                 iss >> value;
                 this->_readFailed = !iss;
