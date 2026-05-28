@@ -20,6 +20,7 @@ set(SRC
         src/IPC/NamedPipe.cpp
         src/Shell/Shell.cpp
         src/Kitchen/Cook.cpp
+        src/Poller.cpp
 )
 
 set(TESTS_SRC
