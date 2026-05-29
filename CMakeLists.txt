@@ -42,7 +42,6 @@ add_executable(unit_tests EXCLUDE_FROM_ALL
         ${SRC}
         ${TESTS_SRC}
 )
-target_link_libraries(unit_tests PRIVATE json_parser)
 
 target_include_directories(unit_tests PRIVATE
         include
@@ -65,7 +64,7 @@ add_custom_target(coverage
 target_compile_options(unit_tests PRIVATE --coverage -g -O1)
 target_link_options(unit_tests PRIVATE --coverage -g -O1)
 
-target_link_libraries(unit_tests criterion)
+target_link_libraries(unit_tests criterion json_parser)
 add_test(NAME unit_tests COMMAND unit_tests)
 
 if (ENABLE_ASAN)

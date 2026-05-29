@@ -9,16 +9,15 @@
     #define KITCHENPROCESS_HPP
     #include <bits/chrono.h>
 
-    #include "Json.hpp"
     #include "../IPC/NamedPipe.hpp"
     #include "../IPC/Process.hpp"
+    #include "Json.hpp"
 
 namespace plazza {
     class KitchenProcess {
     public:
-        KitchenProcess(size_t id,
-            std::size_t nbCooks, std::chrono::milliseconds refillTime,
-            double multiplier);
+        KitchenProcess(size_t id, std::size_t nbCooks,
+            std::chrono::milliseconds refillTime, double multiplier);
 
         KitchenProcess(const KitchenProcess &) = delete;
 

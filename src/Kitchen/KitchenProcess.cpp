@@ -81,11 +81,11 @@ namespace plazza {
         kitchen.start();
     }
 
-    static bool handleOrder(KitchenProcess &process, Kitchen &kitchen,
-        const std::string &line)
+    static bool handleOrder(
+        KitchenProcess &process, Kitchen &kitchen, const std::string &line)
     {
         std::istringstream iss(line);
-        PizzaOrder order{};
+        PizzaOrder order {};
         if (!(iss >> order))
             return true;
         if (kitchen.isFull())
