@@ -7,6 +7,7 @@
 
 #include "Reception.hpp"
 
+#include <chrono>
 #include <fstream>
 #include <sstream>
 #include <utility>
@@ -26,7 +27,9 @@ namespace plazza {
 
     Reception::Reception(
         std::size_t numCook, std::size_t refillTime, double multiplier) :
-        _numCook(numCook), _refillTime(refillTime), _multiplier(multiplier)
+        _numCook(numCook),
+        _refillTime(refillTime),
+        _multiplier(multiplier)
     {
     }
 
@@ -51,20 +54,29 @@ namespace plazza {
         }
     }
 
+    void Reception::logFinishedOrder(
+        const KitchenProcess &kitchen, const PizzaOrder &order)
+    {
+        this->startLog() << "Kitchen " << kitchen.getId() << " Finished " <<
+            order << "." << std::endl;
+    }
+
     void Reception::handleKitchenResponse(int fd)
     {
         auto kitchenReady =
-            std::ranges::find(this->_kitchens, fd, [](const auto &kitchen) {
-                return kitchen.getPizzaReady().getReadFd();
-            });
+            std::ranges::find(this->_kitchens,
+                fd,
+                [](const auto &kitchen) {
+                    return kitchen.getPizzaReady().getReadFd();
+                });
         if (kitchenReady == this->_kitchens.end())
             return;
         PizzaOrder order;
         kitchenReady->getPizzaReady() >> order;
-        this->_logFile << "Order: " << order << " finished!" << std::endl;
+        this->logFinishedOrder(*kitchenReady, order);
         for (; kitchenReady->getPizzaReady().isReadable();
-            kitchenReady->getPizzaReady() >> order)
-            this->_logFile << "Order: " << order << " finished!" << std::endl;
+               kitchenReady->getPizzaReady() >> order)
+            this->logFinishedOrder(*kitchenReady, order);
     }
 
     std::vector<int> Reception::getPizzasReadyFds()
@@ -78,6 +90,19 @@ namespace plazza {
             ordersFd.emplace_back(readyPizza.getReadFd());
         }
         return ordersFd;
+    }
+
+    std::ofstream &Reception::startLog()
+    {
+        auto now = std::chrono::system_clock::now();
+        std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+            now.time_since_epoch()) % 1000;
+
+        this->_logFile << "[" <<
+            std::put_time(std::localtime(&now_c), "%H:%M:%S") << "." <<
+            std::setfill('0') << std::setw(3) << ms.count() << "] ";
+        return this->_logFile;
     }
 
     std::pair<PizzaOrder, size_t> Reception::parseSingleOrder(
@@ -122,12 +147,24 @@ namespace plazza {
             order.second--;
             return;
         }
-        auto &newKitchen = this->_kitchens.emplace_back(
-            this->_numCook, this->_refillTime, this->_multiplier);
+        auto &newKitchen = this->addNewKitchen();
         newKitchen.getOrders() << order.first;
         bool tookOrder = false;
         if (!(newKitchen.getToReception() >> tookOrder) || !tookOrder)
             throw std::runtime_error("New kitchen did not accept order");
         order.second--;
+    }
+
+    KitchenProcess &Reception::addNewKitchen()
+    {
+        KitchenProcess &newKitchen =
+            this->_kitchens.emplace_back(this->_nextKitchenId,
+                this->_numCook,
+                this->_refillTime,
+                this->_multiplier);
+        this->startLog() << "Opening new kitchen with id: " << this->
+            _nextKitchenId << std::endl;
+        this->_nextKitchenId++;
+        return newKitchen;
     }
 } // namespace plazza

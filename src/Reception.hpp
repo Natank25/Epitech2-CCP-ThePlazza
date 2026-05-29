@@ -34,9 +34,13 @@ namespace plazza {
 
         void sendOrders();
 
+        void logFinishedOrder(const KitchenProcess &kitchen, const PizzaOrder &order);
+
         void handleKitchenResponse(int fd);
 
         std::vector<int> getPizzasReadyFds();
+
+        std::ofstream &startLog();
 
     private:
         static std::pair<PizzaOrder, size_t> parseSingleOrder(
@@ -49,6 +53,7 @@ namespace plazza {
         std::size_t _refillTime;
         double _multiplier;
         std::ofstream _logFile {LOG_FILE};
+        std::size_t _nextKitchenId{0};
 
         static constexpr auto LOG_FILE = "./Plazza.log";
         static constexpr char ORDER_SEPARATOR = ';';
@@ -57,6 +62,7 @@ namespace plazza {
         std::vector<KitchenProcess> _kitchens;
 
         void sendOrder(decltype(_orders)::value_type &order);
+        KitchenProcess &addNewKitchen();
     };
 } // namespace plazza
 #endif
