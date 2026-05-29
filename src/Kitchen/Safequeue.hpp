@@ -7,9 +7,9 @@
 
 #ifndef SAFEQUEUE_HPP
     #define SAFEQUEUE_HPP
-    #include <queue>
-    #include <mutex>
     #include <condition_variable>
+    #include <mutex>
+    #include <queue>
     #include <stdexcept>
 
 namespace plazza {
@@ -28,7 +28,8 @@ namespace plazza {
         T pop()
         {
             std::unique_lock lock(_mutex);
-            _itemAvailable.wait(lock, [this] { return !_queue.empty() || _stop; });
+            _itemAvailable.wait(
+                lock, [this] { return !_queue.empty() || _stop; });
             if (_stop && _queue.empty())
                 throw std::runtime_error("SafeQueue stopped");
             T item = std::move(_queue.front());

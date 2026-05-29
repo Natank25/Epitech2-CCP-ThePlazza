@@ -18,15 +18,20 @@ namespace plazza {
         KitchenProcess(KitchenProcess &&) noexcept = default;
         KitchenProcess &operator=(KitchenProcess &&) noexcept = default;
 
-        KitchenProcess(std::size_t nbCooks, int refillTimeMs,
-            double multiplier);
+        KitchenProcess(
+            std::size_t nbCooks, int refillTimeMs, double multiplier);
 
         [[nodiscard]] NamedPipe &getToReception();
         [[nodiscard]] NamedPipe &getOrders();
+        [[nodiscard]] NamedPipe &getPizzaReady();
+
+        [[nodiscard]] const NamedPipe &getToReception() const;
+        [[nodiscard]] const NamedPipe &getOrders() const;
+        [[nodiscard]] const NamedPipe &getPizzaReady() const;
 
     private:
-        static int kitchenLoop(KitchenProcess &process,
-            size_t nbCooks, int refillTimeMs, double multiplier);
+        static int kitchenLoop(KitchenProcess &process, size_t nbCooks,
+            int refillTimeMs, double multiplier);
 
         static std::string createTempFileName();
 

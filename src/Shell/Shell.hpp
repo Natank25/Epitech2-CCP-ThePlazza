@@ -7,15 +7,20 @@
 
 #ifndef SHELL_HPP
     #define SHELL_HPP
-    #include <vector>
     #include <string>
+    #include <vector>
 
+    #include "../Poller.hpp"
     #include "../Reception.hpp"
 
 namespace plazza {
     class Shell {
     public:
         explicit Shell(std::vector<std::string> const &args);
+
+        void readUserInput();
+
+        void handleReadableFd(int readableFd);
 
         [[nodiscard]] int executeShell();
 
@@ -24,6 +29,7 @@ namespace plazza {
             explicit InvalidArgs(const std::string &msg);
 
             [[nodiscard]] const char *what() const noexcept override;
+
         private:
             std::string _msg;
         };

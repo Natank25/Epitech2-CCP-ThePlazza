@@ -16,6 +16,6 @@ int main(int ac, char **av)
 {
     std::vector<std::string> args(av, av + ac);
 
-        plazza::Shell s(args);
-        return s.executeShell();
+    plazza::Shell s(args);
+    return s.executeShell();
 }

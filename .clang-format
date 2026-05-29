@@ -2,10 +2,10 @@
 Language: Cpp
 BasedOnStyle: LLVM
 AccessModifierOffset: -4
-AlignAfterOpenBracket: DontAlign
+AlignAfterOpenBracket: false
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
-AlignOperands: true
+AlignOperands: DontAlign
 AlignTrailingComments: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
@@ -13,7 +13,7 @@ AllowShortFunctionsOnASingleLine: None
 AllowShortLambdasOnASingleLine: Inline
 AlwaysBreakAfterReturnType: None
 AlwaysBreakTemplateDeclarations: Yes
-BinPackArguments: true
+BinPackArguments: false
 BinPackParameters: BinPack
 BraceWrapping:
   AfterCaseLabel: false

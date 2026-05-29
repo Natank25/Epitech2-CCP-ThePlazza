@@ -5,13 +5,11 @@
 ** DESCRIPTION
 */
 
-#include <sstream>
-#include <utility>
-
 #include "Reception.hpp"
 
 #include <fstream>
-#include <iomanip>
+#include <sstream>
+#include <utility>
 
 #include "Pizza/PizzaFactory.hpp"
 
@@ -51,6 +49,35 @@ namespace plazza {
             while (order.second != 0)
                 this->sendOrder(order);
         }
+    }
+
+    void Reception::handleKitchenResponse(int fd)
+    {
+        auto kitchenReady =
+            std::ranges::find(this->_kitchens, fd, [](const auto &kitchen) {
+                return kitchen.getPizzaReady().getReadFd();
+            });
+        if (kitchenReady == this->_kitchens.end())
+            return;
+        PizzaOrder order;
+        kitchenReady->getPizzaReady() >> order;
+        this->_logFile << "Order: " << order << " finished!" << std::endl;
+        for (; kitchenReady->getPizzaReady().isReadable();
+            kitchenReady->getPizzaReady() >> order)
+            this->_logFile << "Order: " << order << " finished!" << std::endl;
+    }
+
+    std::vector<int> Reception::getPizzasReadyFds()
+    {
+        std::vector<int> ordersFd = {};
+
+        ordersFd.reserve(this->_kitchens.size());
+        for (auto &kitchen : this->_kitchens) {
+            auto &readyPizza = kitchen.getPizzaReady();
+            readyPizza.openRead();
+            ordersFd.emplace_back(readyPizza.getReadFd());
+        }
+        return ordersFd;
     }
 
     std::pair<PizzaOrder, size_t> Reception::parseSingleOrder(

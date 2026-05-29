@@ -10,8 +10,8 @@
     #include <functional>
     #include <queue>
 
-    #include "Cook.hpp"
     #include "../Pizza/Pizza.hpp"
+    #include "Cook.hpp"
     #include "Stock.hpp"
 
 namespace plazza {
@@ -32,6 +32,7 @@ namespace plazza {
         void inactivityCheckLoop();
 
         ~Kitchen();
+
     private:
         static constexpr int CHECK_ACTIVITY_INTERVAL_MS = 500;
         static constexpr int INACTIVITY_CLOSE_TIME_S = 5;
@@ -50,4 +51,4 @@ namespace plazza {
     };
 } // namespace plazza
 
-#endif //KITCHEN_HPP
+#endif // KITCHEN_HPP

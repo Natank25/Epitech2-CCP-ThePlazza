@@ -14,7 +14,10 @@
 
 namespace plazza {
     Shell::Shell(std::vector<std::string> const &args) :
-        _cookingMulti(1.0), _nbCooks(5), _refillTime(1000), _exitShell(false),
+        _cookingMulti(1.0),
+        _nbCooks(5),
+        _refillTime(1000),
+        _exitShell(false),
         _reception(_nbCooks, _refillTime, _cookingMulti)
     {
         if (args.size() != 4)
@@ -37,21 +40,45 @@ namespace plazza {
         this->_reception = Reception(_nbCooks, _refillTime, _cookingMulti);
     }
 
-    int Shell::executeShell()
+    void Shell::readUserInput()
     {
         std::string input;
 
+        getline(std::cin, input);
+        if (input.empty())
+            return;
+        try {
+            this->_reception.parseLine(input);
+        } catch (const InvalidOrderException &e) {
+            std::cout << e.what() << std::endl;
+        }
+        this->_reception.sendOrders();
+        std::cout << "> " << std::flush;
+    }
+
+    void Shell::handleReadableFd(int readableFd)
+    {
+        if (readableFd == STDIN_FILENO)
+            this->readUserInput();
+        else
+            this->_reception.handleKitchenResponse(readableFd);
+    }
+
+    int Shell::executeShell()
+    {
+        std::vector<int> kitchensFds = {};
+        std::cout << "> " << std::flush;
+
         while (!std::cin.eof() && !getExitShell()) {
-            std::cout << "> ";
-            getline(std::cin, input);
-            if (input.empty())
-                continue;
-            try {
-                this->_reception.parseLine(input);
-            } catch (const InvalidOrderException &e) {
-                std::cout << e.what() << std::endl;
-            }
-            this->_reception.sendOrders();
+            Poller poller;
+            poller.pushBack(STDIN_FILENO);
+            for (int kitchensFd : kitchensFds)
+                poller.pushBack(kitchensFd);
+            poller.poll();
+            auto readableFds = poller.getPollResult();
+            for (int readableFd : readableFds)
+                this->handleReadableFd(readableFd);
+            kitchensFds = this->_reception.getPizzasReadyFds();
         }
         return EPI_SUCCESS;
     }
@@ -86,5 +113,8 @@ namespace plazza {
         return _nbCooks;
     }
 
-    double Shell::getCookingMulti() const { return _cookingMulti; }
+    double Shell::getCookingMulti() const
+    {
+        return _cookingMulti;
+    }
 } // namespace plazza

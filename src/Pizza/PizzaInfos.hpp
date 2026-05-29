@@ -12,20 +12,9 @@
 #include <unordered_map>
 
 namespace plazza {
-    enum PizzaType {
-        Regina = 1,
-        Margarita = 2,
-        Americana = 4,
-        Fantasia = 8
-    };
+    enum PizzaType { Regina = 1, Margarita = 2, Americana = 4, Fantasia = 8 };
 
-    enum PizzaSize {
-        S = 1,
-        M = 2,
-        L = 4,
-        XL = 8,
-        XXL = 16
-    };
+    enum PizzaSize { S = 1, M = 2, L = 4, XL = 8, XXL = 16 };
 
     std::istream &operator>>(std::istream &stream, PizzaSize &pizzaSize);
 
@@ -36,7 +25,7 @@ namespace plazza {
             {"L", L},
             {"XL", XL},
             {"XXL", XXL},
-        };
+    };
 } // namespace plazza
 
 #endif // PIZZAINFOS_HPP

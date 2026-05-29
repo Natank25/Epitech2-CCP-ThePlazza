@@ -7,8 +7,8 @@
 
 #ifndef STOCK_HPP
     #define STOCK_HPP
-    #include <mutex>
     #include <condition_variable>
+    #include <mutex>
     #include <unordered_map>
     #include "Ingredient.hpp"
 
@@ -18,7 +18,8 @@ namespace plazza {
         Stock();
 
         void refillIngredients();
-        bool retrieveIngredient(Ingredient const &ingredient, unsigned int quantity);
+        bool retrieveIngredient(
+            Ingredient const &ingredient, unsigned int quantity);
 
     private:
         std::unordered_map<std::string, unsigned int> _ingredients;
@@ -27,4 +28,4 @@ namespace plazza {
     };
 } // namespace plazza
 
-#endif //STOCK_HPP
+#endif // STOCK_HPP

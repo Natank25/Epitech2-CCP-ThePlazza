@@ -30,7 +30,7 @@ namespace plazza {
         Kitchen kitchen(refillTimeMs, multiplier, nbCooks);
 
         kitchen.setOnPizzaDone([&process](const PizzaOrder &order) {
-            process._pizzaReady << order.pizzaName;
+            process._pizzaReady << order;
         });
 
         kitchen.start();
@@ -62,11 +62,31 @@ namespace plazza {
 
     NamedPipe &KitchenProcess::getToReception()
     {
-        return _toReception;
+        return this->_toReception;
     }
 
     NamedPipe &KitchenProcess::getOrders()
     {
-        return _orders;
+        return this->_orders;
+    }
+
+    NamedPipe &KitchenProcess::getPizzaReady()
+    {
+        return this->_pizzaReady;
+    }
+
+    const NamedPipe &KitchenProcess::getToReception() const
+    {
+        return this->_toReception;
+    }
+
+    const NamedPipe &KitchenProcess::getOrders() const
+    {
+        return this->_orders;
+    }
+
+    const NamedPipe &KitchenProcess::getPizzaReady() const
+    {
+        return this->_pizzaReady;
     }
 } // namespace plazza

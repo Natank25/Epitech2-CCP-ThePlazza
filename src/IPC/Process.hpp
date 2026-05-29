@@ -34,17 +34,18 @@ namespace plazza {
 
         template<typename Callable, typename... Args>
             requires std::is_invocable_v<std::decay_t<Callable>,
-                         std::decay_t<Args>...>
-                     && std::is_convertible_v<std::invoke_result_t<
-                         std::decay_t<Callable>, std::decay_t<Args>...>, int>
-        explicit Process(Callable &&f, Args &&... args) :
+                         std::decay_t<Args>...> &&
+            std::is_convertible_v<std::invoke_result_t<std::decay_t<Callable>,
+                                      std::decay_t<Args>...>,
+                int>
+        explicit Process(Callable &&f, Args &&...args) :
             _pid(fork())
         {
             if (_pid == -1)
                 throw FailedForkException(errno);
             if (_pid == 0) {
-                int ret = std::forward<
-                    Callable>(f)(std::forward<Args>(args)...);
+                int ret =
+                    std::forward<Callable>(f)(std::forward<Args>(args)...);
                 std::exit(ret);
             }
         }
@@ -62,10 +63,10 @@ namespace plazza {
 
     private:
         int _pid;
-        int _exitStatus{DEFAULT_EXIT_STATUS};
+        int _exitStatus {DEFAULT_EXIT_STATUS};
 
         static constexpr int DEFAULT_EXIT_STATUS = -1;
     };
-} // ThePlazza
+} // namespace plazza
 
 #endif

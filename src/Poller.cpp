@@ -66,7 +66,8 @@ namespace plazza {
         std::vector<pollfd> pollFds;
 
         pollFds.reserve(this->_listeningFd.size());
-        std::ranges::transform(this->_listeningFd, std::back_inserter(pollFds),
+        std::ranges::transform(this->_listeningFd,
+            std::back_inserter(pollFds),
             [](int fd) { return pollfd {fd, POLLIN, 0}; });
         return pollFds;
     }

@@ -18,4 +18,4 @@ namespace plazza {
             pizzaSize = PIZZA_SIZE_FROM_STR.at(strSize);
         return stream;
     }
-}
+} // namespace plazza

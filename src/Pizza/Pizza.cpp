@@ -15,8 +15,7 @@
 
 namespace plazza {
     Pizza::Pizza(std::vector<Ingredient> ingredients, double timeToCook) :
-        _ingredients(std::move(ingredients)),
-        _timeToCook(timeToCook)
+        _ingredients(std::move(ingredients)), _timeToCook(timeToCook)
     {
     }
 
@@ -33,11 +32,11 @@ namespace plazza {
     std::size_t PizzaOrderHasher::operator()(const PizzaOrder &order) const
     {
         std::size_t seed = 0x50C68423;
-        seed ^= (seed << 6) + (seed >> 2) + 0x146C67DE + static_cast<
-            std::size_t>(order.size);
+        seed ^= (seed << 6) + (seed >> 2) + 0x146C67DE +
+            static_cast<std::size_t>(order.size);
         std::hash<std::string> stringHasher;
-        seed ^= (seed << 6) + (seed >> 2) + 0x4787A36D + stringHasher(
-            order.pizzaName);
+        seed ^= (seed << 6) + (seed >> 2) + 0x4787A36D +
+            stringHasher(order.pizzaName);
         return seed;
     }
 
@@ -61,13 +60,12 @@ namespace plazza {
         return stream;
     }
 
-    std::ostream & operator<<(std::ostream &stream,
-        const PizzaOrder &pizzaOrder)
+    std::ostream &operator<<(std::ostream &stream, const PizzaOrder &pizzaOrder)
     {
         std::string size;
 
-        for(const auto &[fst, snd] : PIZZA_SIZE_FROM_STR)
-            if(snd == pizzaOrder.size)
+        for (const auto &[fst, snd] : PIZZA_SIZE_FROM_STR)
+            if (snd == pizzaOrder.size)
                 size = fst;
         return stream << pizzaOrder.pizzaName << " " << size;
     }
