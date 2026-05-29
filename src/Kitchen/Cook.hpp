@@ -13,10 +13,11 @@
     #include "Stock.hpp"
 
 namespace plazza {
+    class Kitchen;
 
     class Cook {
     public:
-        static void cookLoop(SafeQueue<PizzaOrder> &queue, Stock &stock,
+        static void cookLoop(Kitchen & kitchen, Stock &stock,
             double multiplier,
             const std::function<void(const PizzaOrder &)> &onDone);
     };

@@ -48,28 +48,17 @@ namespace plazza {
             return *this;
         }
 
-        void fillBufferUntilNewline();
-
         NamedPipe &operator>>(auto &value)
         {
-            if (_readFd == -1)
-                this->openRead();
-
-            if (!this->isReadable())
-                this->fillBufferUntilNewline();
-            if (this->_readFailed)
-                return *this;
-
-            size_t newlinePos = this->_readBuffer.find('\n');
-            std::string line = this->_readBuffer.substr(0, newlinePos);
-            this->_readBuffer = this->_readBuffer.substr(newlinePos + 1);
-
+            auto line = this->getLine();
             std::istringstream iss(line);
             iss >> value;
             this->_readFailed = !iss;
 
             return *this;
         }
+
+        std::string getLine();
 
         [[nodiscard]] operator bool() const;
 
@@ -90,6 +79,8 @@ namespace plazza {
         bool _readFailed;
         bool _ownsPath;
         std::string _readBuffer;
+
+        void fillBufferUntilNewline();
 
         static constexpr mode_t DEFAULT_FIFO_MODE = 0666;
         static constexpr size_t READ_BUFFER_SIZE = 512;

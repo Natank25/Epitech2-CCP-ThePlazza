@@ -10,12 +10,15 @@
 #include <algorithm>
 #include <ranges>
 #include <utility>
+#include <chrono>
 
 #include "PizzaFactory.hpp"
 
 namespace plazza {
-    Pizza::Pizza(std::vector<Ingredient> ingredients, double timeToCook) :
-        _ingredients(std::move(ingredients)), _timeToCook(timeToCook)
+    Pizza::Pizza(std::vector<Ingredient> ingredients,
+        std::chrono::milliseconds timeToCook) :
+        _ingredients(std::move(ingredients)),
+        _timeToCook(timeToCook)
     {
     }
 
@@ -24,7 +27,7 @@ namespace plazza {
         return _ingredients;
     }
 
-    double Pizza::getTimeToCook() const
+    std::chrono::milliseconds Pizza::getTimeToCook() const
     {
         return _timeToCook;
     }
@@ -38,11 +41,6 @@ namespace plazza {
         seed ^= (seed << 6) + (seed >> 2) + 0x4787A36D +
             stringHasher(order.pizzaName);
         return seed;
-    }
-
-    bool operator==(const PizzaOrder &lhs, const PizzaOrder &rhs)
-    {
-        return lhs.size == rhs.size && lhs.pizzaName == rhs.pizzaName;
     }
 
     std::istream &operator>>(std::istream &stream, PizzaOrder &pizzaOrder)
@@ -68,5 +66,10 @@ namespace plazza {
             if (snd == pizzaOrder.size)
                 size = fst;
         return stream << pizzaOrder.pizzaName << " " << size;
+    }
+
+    bool operator==(const PizzaOrder &lhs, const PizzaOrder &rhs)
+    {
+        return lhs.size == rhs.size && lhs.pizzaName == rhs.pizzaName;
     }
 } // namespace plazza

@@ -9,6 +9,7 @@
     #define RECEPTION_HPP
 
     #include <fstream>
+#include <functional>
     #include <string>
     #include <unordered_map>
 
@@ -29,12 +30,17 @@ namespace plazza {
     class Reception {
     public:
         Reception(
-            std::size_t numCook, std::size_t refillTime, double multiplier);
+            std::size_t numCook, std::chrono::milliseconds refillTime, double multiplier);
+
         void parseLine(const std::string &line);
 
         void sendOrders();
 
-        void logFinishedOrder(const KitchenProcess &kitchen, const PizzaOrder &order);
+        void handleKitchenCommand(
+            const std::ranges::borrowed_iterator_t<std::vector<KitchenProcess>
+                &>
+            &
+            kitchenReady, const std::string &data);
 
         void handleKitchenResponse(int fd);
 
@@ -50,9 +56,9 @@ namespace plazza {
 
         std::unordered_map<PizzaOrder, size_t, PizzaOrderHasher> _orders;
         std::size_t _numCook;
-        std::size_t _refillTime;
+        std::chrono::milliseconds _refillTime;
         double _multiplier;
-        std::ofstream _logFile {LOG_FILE};
+        std::ofstream _logFile{LOG_FILE};
         std::size_t _nextKitchenId{0};
 
         static constexpr auto LOG_FILE = "./Plazza.log";
@@ -62,7 +68,20 @@ namespace plazza {
         std::vector<KitchenProcess> _kitchens;
 
         void sendOrder(decltype(_orders)::value_type &order);
+
         KitchenProcess &addNewKitchen();
+
+        using KitchenProcessIterator = std::ranges::borrowed_iterator_t<
+            std::vector<KitchenProcess> &>;
+
+        void handleFinishedOrderCmd(KitchenProcessIterator kitchen,
+            std::istringstream &line);
+
+        void handleClosedKitchenCmd(KitchenProcessIterator kitchen,
+            std::istringstream &line);
+
+        static const std::unordered_map<std::string, void (Reception::*)(
+            KitchenProcessIterator, std::istringstream &)> KITCHEN_COMMANDS_FNS;
     };
 } // namespace plazza
 #endif

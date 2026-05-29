@@ -92,6 +92,22 @@ namespace plazza {
         }
     }
 
+    std::string NamedPipe::getLine()
+    {
+        if (_readFd == -1)
+            this->openRead();
+
+        if (!this->isReadable())
+            this->fillBufferUntilNewline();
+        if (this->_readFailed)
+            return "";
+
+        size_t newlinePos = this->_readBuffer.find('\n');
+        std::string line = this->_readBuffer.substr(0, newlinePos);
+        this->_readBuffer = this->_readBuffer.substr(newlinePos + 1);
+        return line;
+    }
+
     NamedPipe::operator bool() const
     {
         return !this->_readFailed;

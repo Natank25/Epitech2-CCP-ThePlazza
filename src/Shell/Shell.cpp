@@ -18,7 +18,9 @@ namespace plazza {
         _nbCooks(5),
         _refillTime(1000),
         _exitShell(false),
-        _reception(_nbCooks, _refillTime, _cookingMulti)
+        _reception(_nbCooks,
+            std::chrono::milliseconds(_refillTime),
+            _cookingMulti)
     {
         if (args.size() != 4)
             throw InvalidArgs("Invalid number of arguments.");
@@ -37,7 +39,9 @@ namespace plazza {
             refillTimeSs.str().starts_with("-"))
             throw std::runtime_error(
                 "Third argument is not a valid unsigned int");
-        this->_reception = Reception(_nbCooks, _refillTime, _cookingMulti);
+        this->_reception = Reception(_nbCooks,
+            std::chrono::milliseconds(_refillTime),
+            _cookingMulti);
     }
 
     void Shell::readUserInput()

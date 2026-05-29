@@ -9,6 +9,7 @@
     #define PIZZA_HPP
     #include <string>
     #include <vector>
+#include <bits/chrono.h>
 
     #include "Ingredient.hpp"
     #include "PizzaInfos.hpp"
@@ -16,14 +17,15 @@
 namespace plazza {
     class Pizza {
     public:
-        Pizza(std::vector<Ingredient> ingredients, double timeToCook);
+        Pizza(std::vector<Ingredient> ingredients,
+            std::chrono::milliseconds timeToCook);
 
         [[nodiscard]] std::vector<Ingredient> getIngredients();
-        [[nodiscard]] double getTimeToCook() const;
+        [[nodiscard]] std::chrono::milliseconds getTimeToCook() const;
 
     private:
         std::vector<Ingredient> _ingredients;
-        double _timeToCook;
+        std::chrono::milliseconds _timeToCook;
     };
 
     struct PizzaOrder {

@@ -6,15 +6,20 @@
 */
 
 #include "Kitchen.hpp"
+
+#include <iomanip>
+
 #include "Cook.hpp"
+#include "../Pizza/PizzaFactory.hpp"
 
 namespace plazza {
 
-    Kitchen::Kitchen(int refillTimeMs, double multiplier, std::size_t nbCooks) :
-        _refillTimeMs(refillTimeMs),
+    Kitchen::Kitchen(std::chrono::milliseconds refillTimeMs, double multiplier, std::size_t nbCooks) :
+        _refillTime(refillTimeMs),
         _multiplier(multiplier),
         _running(true),
-        _lastActivity(std::chrono::steady_clock::now())
+        _estimatedLastActivity(
+            std::chrono::steady_clock::now() + INACTIVITY_CLOSE_TIME)
     {
         for (std::size_t i = 0; i < nbCooks; ++i)
             _cooks.emplace_back();
@@ -27,18 +32,35 @@ namespace plazza {
 
     void Kitchen::start()
     {
-        _threads.emplace_back([this] { stockRefillLoop(); });
-        _threads.emplace_back([this] { inactivityCheckLoop(); });
-        for (auto &_ : _cooks)
+        _threads.emplace_back([this] {
+            stockRefillLoop();
+        });
+        _threads.emplace_back([this] {
+            inactivityCheckLoop();
+        });
+        for (auto &_ : this->_cooks)
             _threads.emplace_back([this] {
-                Cook::cookLoop(_queue, _stock, _multiplier, _onPizzaDone);
+                Cook::cookLoop(*this, _stock, _multiplier, _onPizzaDone);
             });
+    }
+
+    void Kitchen::updatedEstimatedLastActivity()
+    {
+        auto estimatedLastActivity = std::chrono::steady_clock::now() +
+                INACTIVITY_CLOSE_TIME;
+        this->_estimatedLastActivity = std::max(
+            this->_estimatedLastActivity.load(),
+            estimatedLastActivity);
     }
 
     void Kitchen::enqueue(const PizzaOrder &order)
     {
-        _lastActivity = std::chrono::steady_clock::now();
         _queue.push(order);
+    }
+
+    PizzaOrder Kitchen::popOrder()
+    {
+        return this->_queue.pop();
     }
 
     bool Kitchen::isFull() const
@@ -68,8 +90,7 @@ namespace plazza {
     void Kitchen::stockRefillLoop()
     {
         while (_running) {
-            std::this_thread::sleep_for(
-                std::chrono::milliseconds(_refillTimeMs));
+            std::this_thread::sleep_for(_refillTime);
             _stock.refillIngredients();
         }
     }
@@ -77,11 +98,13 @@ namespace plazza {
     void Kitchen::inactivityCheckLoop()
     {
         while (_running) {
-            std::this_thread::sleep_for(
-                std::chrono::milliseconds(CHECK_ACTIVITY_INTERVAL_MS));
-            auto idle = std::chrono::steady_clock::now() - _lastActivity.load();
-            if (_queue.empty() &&
-                idle >= std::chrono::seconds(INACTIVITY_CLOSE_TIME_S)) {
+            auto activityTimeout = this->_estimatedLastActivity.load() -
+                std::chrono::steady_clock::now();
+            std::this_thread::sleep_for(activityTimeout);
+            if (std::chrono::steady_clock::now() < this->_estimatedLastActivity.
+                load())
+                continue;
+            if (_queue.empty()) {
                 _running = false;
                 _queue.stop();
             }

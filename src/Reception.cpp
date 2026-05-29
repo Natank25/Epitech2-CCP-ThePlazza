@@ -26,7 +26,8 @@ namespace plazza {
     }
 
     Reception::Reception(
-        std::size_t numCook, std::size_t refillTime, double multiplier) :
+        std::size_t numCook, std::chrono::milliseconds refillTime,
+        double multiplier) :
         _numCook(numCook),
         _refillTime(refillTime),
         _multiplier(multiplier)
@@ -54,11 +55,17 @@ namespace plazza {
         }
     }
 
-    void Reception::logFinishedOrder(
-        const KitchenProcess &kitchen, const PizzaOrder &order)
+    void Reception::handleKitchenCommand(
+        const std::ranges::borrowed_iterator_t<std::vector<KitchenProcess> &>
+        &kitchenReady, const std::string &data)
     {
-        this->startLog() << "Kitchen " << kitchen.getId() << " Finished " <<
-            order << "." << std::endl;
+        std::istringstream iss(data);
+        std::string command;
+        iss >> command;
+        if (!iss.eof())
+            iss >> std::ws;
+        if (KITCHEN_COMMANDS_FNS.contains(command))
+            (this->*KITCHEN_COMMANDS_FNS.at(command))(kitchenReady, iss);
     }
 
     void Reception::handleKitchenResponse(int fd)
@@ -71,12 +78,11 @@ namespace plazza {
                 });
         if (kitchenReady == this->_kitchens.end())
             return;
-        PizzaOrder order;
-        kitchenReady->getPizzaReady() >> order;
-        this->logFinishedOrder(*kitchenReady, order);
+        std::string fullLine = kitchenReady->getPizzaReady().getLine();
+        this->handleKitchenCommand(kitchenReady, fullLine);
         for (; kitchenReady->getPizzaReady().isReadable();
-               kitchenReady->getPizzaReady() >> order)
-            this->logFinishedOrder(*kitchenReady, order);
+               fullLine = kitchenReady->getPizzaReady().getLine())
+            this->handleKitchenCommand(kitchenReady, fullLine);;
     }
 
     std::vector<int> Reception::getPizzasReadyFds()
@@ -167,4 +173,28 @@ namespace plazza {
         this->_nextKitchenId++;
         return newKitchen;
     }
+
+    void Reception::handleFinishedOrderCmd(KitchenProcessIterator kitchen,
+        std::istringstream &line)
+    {
+        PizzaOrder order;
+        line >> order;
+        this->startLog() << "Kitchen " << kitchen->getId() << " finished order " <<
+            order << "." << std::endl;
+    }
+
+    void Reception::handleClosedKitchenCmd(KitchenProcessIterator kitchen,
+        std::istringstream &)
+    {
+        this->startLog() << "Kitchen " << kitchen->getId() <<
+            " closed for good!" << std::endl;
+        this->_kitchens.erase(kitchen);
+    }
+
+    const std::unordered_map<std::string, void (Reception::*)(
+        Reception::KitchenProcessIterator,
+        std::istringstream &)> Reception::KITCHEN_COMMANDS_FNS = {
+        {KitchenProcess::ORDER_DONE_CMD, &Reception::handleFinishedOrderCmd},
+        {KitchenProcess::KITCHEN_CLOSE_CMD, &Reception::handleClosedKitchenCmd},
+    };
 } // namespace plazza

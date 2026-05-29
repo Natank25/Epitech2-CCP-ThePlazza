@@ -7,6 +7,8 @@
 
 #ifndef KITCHENPROCESS_HPP
     #define KITCHENPROCESS_HPP
+    #include <bits/chrono.h>
+
     #include "../IPC/NamedPipe.hpp"
     #include "../IPC/Process.hpp"
 
@@ -14,7 +16,7 @@ namespace plazza {
     class KitchenProcess {
     public:
         KitchenProcess(size_t id,
-            std::size_t nbCooks, int refillTimeMs, double multiplier);
+            std::size_t nbCooks, std::chrono::milliseconds refillTime, double multiplier);
 
         KitchenProcess(const KitchenProcess &) = delete;
         KitchenProcess &operator=(const KitchenProcess &) = delete;
@@ -31,9 +33,12 @@ namespace plazza {
         [[nodiscard]] const NamedPipe &getPizzaReady() const;
         [[nodiscard]] const std::size_t &getId() const;
 
+        static constexpr auto ORDER_DONE_CMD = "ORDER";
+        static constexpr auto KITCHEN_CLOSE_CMD = "CLOSED";
+
     private:
         static int kitchenLoop(KitchenProcess &process, size_t nbCooks,
-            int refillTimeMs, double multiplier);
+            std::chrono::milliseconds refillTime, double multiplier);
 
         [[nodiscard]] std::string createTempFileName() const;
 

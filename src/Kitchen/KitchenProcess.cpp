@@ -15,14 +15,14 @@
 
 namespace plazza {
     KitchenProcess::KitchenProcess(
-        size_t id, std::size_t nbCooks, int refillTimeMs, double multiplier) :
+        size_t id, std::size_t nbCooks, std::chrono::milliseconds refillTime, double multiplier) :
         _id(id),
         _namedPipeName(createTempFileName()),
         _toReception(_namedPipeName + RECEPTION_PIPE_SUFFIX),
         _orders(_namedPipeName + ORDERS_PIPE_SUFFIX),
         _pizzaReady(_namedPipeName + READY_PIZZAS_PIPE_SUFFIX),
         _process(
-            kitchenLoop, std::ref(*this), nbCooks, refillTimeMs, multiplier)
+            kitchenLoop, std::ref(*this), nbCooks, refillTime, multiplier)
     {
     }
 
@@ -62,12 +62,15 @@ namespace plazza {
     }
 
     int KitchenProcess::kitchenLoop(KitchenProcess &process, size_t nbCooks,
-        int refillTimeMs, double multiplier)
+        std::chrono::milliseconds refillTime, double multiplier)
     {
-        Kitchen kitchen(refillTimeMs, multiplier, nbCooks);
+        Kitchen kitchen(refillTime, multiplier, nbCooks);
 
-        kitchen.setOnPizzaDone([&process](const PizzaOrder &order) {
-            process._pizzaReady << order;
+        kitchen.setOnPizzaDone([&process, &kitchen](const PizzaOrder &order) {
+            std::ostringstream data;
+            data << ORDER_DONE_CMD << " " << order;
+            process._pizzaReady << data.str();
+            kitchen.updatedEstimatedLastActivity();
         });
 
         kitchen.start();
@@ -88,6 +91,7 @@ namespace plazza {
                 kitchen.enqueue(order);
             }
         }
+        process.getPizzaReady() << KITCHEN_CLOSE_CMD;
         kitchen.shutdown();
         return EPI_SUCCESS;
     }
