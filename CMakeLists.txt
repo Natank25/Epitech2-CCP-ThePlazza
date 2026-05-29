@@ -42,6 +42,7 @@ add_executable(unit_tests EXCLUDE_FROM_ALL
         ${SRC}
         ${TESTS_SRC}
 )
+target_link_libraries(unit_tests PRIVATE json_parser)
 
 target_include_directories(unit_tests PRIVATE
         include
