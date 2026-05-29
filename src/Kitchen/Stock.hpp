@@ -26,7 +26,7 @@ namespace plazza {
         [[nodiscard]] JSON::JSON getStatus() const;
 
     private:
-        std::unordered_map<std::string, unsigned int> _ingredients{
+        std::unordered_map<std::string, unsigned int> _ingredients {
             {DOUGH.name, 5},
             {TOMATO.name, 5},
             {GRUYERE.name, 5},
