@@ -81,7 +81,7 @@ namespace plazza {
 
         void openWrite();
 
-        bool isReadable() const;
+        [[nodiscard]] bool isReadable() const;
 
     private:
         std::string _path;
