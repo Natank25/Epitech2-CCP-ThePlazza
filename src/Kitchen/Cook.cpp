@@ -13,13 +13,19 @@
 #include "Kitchen.hpp"
 
 namespace plazza {
-    void Cook::cookLoop(Kitchen &kitchen, Stock &stock,
-        double multiplier,
+    Cook::Cook(std::size_t id) :
+        _occupied(false), _id(id)
+    {
+    }
+
+    void Cook::cookLoop(Kitchen &kitchen, Stock &stock, double multiplier,
         const std::function<void(const PizzaOrder &)> &onDone)
     {
         try {
             while (true) {
+                this->_occupied = false;
                 PizzaOrder order = kitchen.popOrder();
+                this->_occupied = true;
                 Pizza pizza = PizzaFactory::createPizza(order.pizzaName);
 
                 for (const auto &ingredient : pizza.getIngredients())
@@ -32,6 +38,19 @@ namespace plazza {
             }
         } catch (const std::runtime_error &) {
         }
+    }
+
+    std::size_t Cook::getId() const
+    {
+        return this->_id;
+    }
+
+    JSON::JSON Cook::getStatus() const
+    {
+        JSON::JSON status = JSON::JSON::object();
+
+        status.set("occupied", this->_occupied);
+        return status;
     }
 
 } // namespace plazza

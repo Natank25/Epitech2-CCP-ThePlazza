@@ -47,6 +47,8 @@ namespace plazza {
         unsigned int _refillTime;
         bool _exitShell;
         Reception _reception;
+
+        static constexpr auto STATUS_COMMAND = "status";
     };
 } // namespace plazza
 #endif // SHELL_HPP

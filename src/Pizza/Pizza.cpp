@@ -8,17 +8,16 @@
 #include "Pizza.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <ranges>
 #include <utility>
-#include <chrono>
 
 #include "PizzaFactory.hpp"
 
 namespace plazza {
     Pizza::Pizza(std::vector<Ingredient> ingredients,
         std::chrono::milliseconds timeToCook) :
-        _ingredients(std::move(ingredients)),
-        _timeToCook(timeToCook)
+        _ingredients(std::move(ingredients)), _timeToCook(timeToCook)
     {
     }
 

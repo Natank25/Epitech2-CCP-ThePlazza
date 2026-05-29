@@ -31,6 +31,8 @@ namespace plazza {
             explicit FifoException(const std::string &message);
         };
 
+        void clear();
+
         explicit NamedPipe(std::string path, mode_t mode = DEFAULT_FIFO_MODE);
 
         ~NamedPipe();

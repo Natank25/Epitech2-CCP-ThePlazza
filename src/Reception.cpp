@@ -12,6 +12,7 @@
 #include <sstream>
 #include <utility>
 
+#include "Json.hpp"
 #include "Pizza/PizzaFactory.hpp"
 
 namespace plazza {
@@ -110,6 +111,16 @@ namespace plazza {
         return this->_logFile;
     }
 
+    void Reception::status()
+    {
+        JSON::JSON status = JSON::JSON::object();
+        for (auto &kitchen : this->_kitchens) {
+            status.set("kitchen_" + std::to_string(kitchen.getId()),
+                kitchen.getStatus());
+        }
+        std::cout << status << std::endl;
+    }
+
     std::pair<PizzaOrder, size_t> Reception::parseSingleOrder(
         const std::string &orderString)
     {
@@ -188,6 +199,10 @@ namespace plazza {
         this->startLog() << "Kitchen " << kitchen->getId()
                          << " closed for good!" << std::endl;
         this->_kitchens.erase(kitchen);
+    }
+
+    void Reception::handleStatusCmd()
+    {
     }
 
     const std::unordered_map<std::string,

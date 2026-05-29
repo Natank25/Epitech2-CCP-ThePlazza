@@ -26,8 +26,21 @@ namespace plazza {
 
     const std::unordered_map<std::string, PizzaFactory::CreatePizza>
         PizzaFactory::BUILTIN_PIZZAS_FACTORY = {
-            {"margarita", []() { return Pizza(MARGARITA_INGREDIENTS, std::chrono::seconds(1)); }},
-            {"regina", []() { return Pizza(REGINA_INGREDIENTS, std::chrono::seconds(2)); }},
-            {"americana", []() { return Pizza(AMERICANA_INGREDIENTS, std::chrono::seconds(2)); }},
-            {"fantasia", []() { return Pizza(FANTASIA_INGREDIENTS, std::chrono::seconds(4)); }}};
+            {"margarita",
+                []() {
+                    return Pizza(
+                        MARGARITA_INGREDIENTS, std::chrono::seconds(1));
+                }},
+            {"regina",
+                []() {
+                    return Pizza(REGINA_INGREDIENTS, std::chrono::seconds(2));
+                }},
+            {"americana",
+                []() {
+                    return Pizza(
+                        AMERICANA_INGREDIENTS, std::chrono::seconds(2));
+                }},
+            {"fantasia", []() {
+                 return Pizza(FANTASIA_INGREDIENTS, std::chrono::seconds(4));
+             }}};
 } // namespace plazza

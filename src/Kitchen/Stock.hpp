@@ -11,6 +11,7 @@
     #include <mutex>
     #include <unordered_map>
     #include "Ingredient.hpp"
+    #include "Json.hpp"
 
 namespace plazza {
     class Stock {
@@ -20,6 +21,8 @@ namespace plazza {
         void refillIngredients();
         bool retrieveIngredient(
             Ingredient const &ingredient, unsigned int quantity);
+
+        JSON::JSON getStatus() const;
 
     private:
         std::unordered_map<std::string, unsigned int> _ingredients;

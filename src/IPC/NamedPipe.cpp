@@ -20,6 +20,21 @@ namespace plazza {
     {
     }
 
+    static void clearFd(int fd)
+    {
+        std::byte c;
+
+        while (read(fd, &c, sizeof(c)) == sizeof(c))
+            ;
+    }
+
+    void NamedPipe::clear()
+    {
+        this->_readBuffer.clear();
+        clearFd(this->getReadFd());
+        clearFd(this->getWriteFd());
+    }
+
     NamedPipe::NamedPipe(std::string path, mode_t mode) :
         _path(std::move(path)),
         _readFd(-1),
@@ -31,6 +46,8 @@ namespace plazza {
             if (errno != EEXIST)
                 throw FifoException(
                     std::string("mkfifo failed: ") + std::strerror(errno));
+            else
+                this->clear();
         }
     }
 

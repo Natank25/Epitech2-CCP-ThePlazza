@@ -12,12 +12,15 @@
 
     #include "../Pizza/Pizza.hpp"
     #include "Cook.hpp"
+    #include "Json.hpp"
     #include "Stock.hpp"
+    #include "Safequeue.hpp"
 
 namespace plazza {
     class Kitchen {
     public:
-        Kitchen(std::chrono::milliseconds refillTime, double multiplier, std::size_t nbCooks);
+        Kitchen(std::chrono::milliseconds refillTime, double multiplier,
+            std::size_t nbCooks);
 
         void shutdown();
 
@@ -42,6 +45,10 @@ namespace plazza {
 
         ~Kitchen();
 
+        JSON::JSON getCooksStatus() const;
+
+        JSON::JSON getStatus() const;
+
     private:
         static constexpr int CHECK_ACTIVITY_INTERVAL_MS = 500;
         static constexpr auto INACTIVITY_CLOSE_TIME = std::chrono::seconds(5);
@@ -49,7 +56,8 @@ namespace plazza {
         std::chrono::milliseconds _refillTime;
         double _multiplier;
         std::atomic<bool> _running;
-        std::atomic<std::chrono::steady_clock::time_point> _estimatedLastActivity;
+        std::atomic<std::chrono::steady_clock::time_point>
+        _estimatedLastActivity;
 
         Stock _stock;
         SafeQueue<PizzaOrder> _queue;

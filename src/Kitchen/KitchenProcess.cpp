@@ -9,21 +9,29 @@
 
 #include <functional>
 
+#include "../Poller.hpp"
 #include "Constants.hpp"
 #include "Kitchen.hpp"
-#include "../Poller.hpp"
 
 namespace plazza {
-    KitchenProcess::KitchenProcess(
-        size_t id, std::size_t nbCooks, std::chrono::milliseconds refillTime, double multiplier) :
+    KitchenProcess::KitchenProcess(size_t id, std::size_t nbCooks,
+        std::chrono::milliseconds refillTime, double multiplier) :
         _id(id),
         _namedPipeName(createTempFileName()),
         _toReception(_namedPipeName + RECEPTION_PIPE_SUFFIX),
         _orders(_namedPipeName + ORDERS_PIPE_SUFFIX),
         _pizzaReady(_namedPipeName + READY_PIZZAS_PIPE_SUFFIX),
-        _process(
-            kitchenLoop, std::ref(*this), nbCooks, refillTime, multiplier)
+        _process(kitchenLoop, std::ref(*this), nbCooks, refillTime, multiplier)
     {
+    }
+
+    JSON::JSON KitchenProcess::getStatus()
+    {
+        this->getOrders() << KITCHEN_STATUS_CMD;
+
+        std::string line = this->getToReception().getLine();
+        std::istringstream iss(line);
+        return *JSON::JSON::parseStream(iss);
     }
 
     NamedPipe &KitchenProcess::getToReception()
@@ -81,13 +89,20 @@ namespace plazza {
         while (kitchen.isRunning()) {
             if (poller.poll(0) == 0)
                 continue;
+            std::string line = process._orders.getLine();
+            if (line == KITCHEN_STATUS_CMD) {
+                process.getToReception()
+                    << kitchen.getStatus().toCompactString();
+                continue;
+            }
+            std::istringstream iss(line);
             PizzaOrder order;
-            if (!(process._orders >> order))
+            if (!(iss >> order))
                 break;
             if (kitchen.isFull()) {
-                process._toReception << false;
+                process.getToReception() << false;
             } else {
-                process._toReception << true;
+                process.getToReception() << true;
                 kitchen.enqueue(order);
             }
         }

@@ -48,6 +48,8 @@ namespace plazza {
 
         std::ofstream &startLog();
 
+        void status();
+
     private:
         static std::pair<PizzaOrder, size_t> parseSingleOrder(
             const std::string &orderString);
@@ -79,6 +81,8 @@ namespace plazza {
 
         void handleClosedKitchenCmd(KitchenProcessIterator kitchen,
             std::istringstream &line);
+
+        void handleStatusCmd();
 
         static const std::unordered_map<std::string, void (Reception::*)(
             KitchenProcessIterator, std::istringstream &)> KITCHEN_COMMANDS_FNS;

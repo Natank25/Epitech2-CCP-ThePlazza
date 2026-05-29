@@ -45,4 +45,14 @@ namespace plazza {
         _ingredients.at(ingredient.name) -= quantity;
         return true;
     }
+
+    JSON::JSON Stock::getStatus() const
+    {
+        JSON::JSON status = JSON::JSON::object();
+
+        for (const auto &[name, quantity] : this->_ingredients) {
+            status.set(name, quantity);
+        }
+        return status;
+    }
 } // namespace plazza

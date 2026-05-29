@@ -9,6 +9,7 @@
     #define KITCHENPROCESS_HPP
     #include <bits/chrono.h>
 
+    #include "Json.hpp"
     #include "../IPC/NamedPipe.hpp"
     #include "../IPC/Process.hpp"
 
@@ -16,21 +17,31 @@ namespace plazza {
     class KitchenProcess {
     public:
         KitchenProcess(size_t id,
-            std::size_t nbCooks, std::chrono::milliseconds refillTime, double multiplier);
+            std::size_t nbCooks, std::chrono::milliseconds refillTime,
+            double multiplier);
 
         KitchenProcess(const KitchenProcess &) = delete;
+
         KitchenProcess &operator=(const KitchenProcess &) = delete;
 
+        JSON::JSON getStatus();
+
         KitchenProcess(KitchenProcess &&) noexcept = default;
+
         KitchenProcess &operator=(KitchenProcess &&) noexcept = default;
 
         [[nodiscard]] NamedPipe &getToReception();
+
         [[nodiscard]] NamedPipe &getOrders();
+
         [[nodiscard]] NamedPipe &getPizzaReady();
 
         [[nodiscard]] const NamedPipe &getToReception() const;
+
         [[nodiscard]] const NamedPipe &getOrders() const;
+
         [[nodiscard]] const NamedPipe &getPizzaReady() const;
+
         [[nodiscard]] const std::size_t &getId() const;
 
         static constexpr auto ORDER_DONE_CMD = "ORDER";
@@ -42,18 +53,20 @@ namespace plazza {
 
         [[nodiscard]] std::string createTempFileName() const;
 
+        std::size_t _id;
         std::string _namedPipeName;
         NamedPipe _toReception;
         NamedPipe _orders;
         NamedPipe _pizzaReady;
         Process _process;
-        std::size_t _id;
 
         static constexpr auto DEFAULT_TEMP_NAME = "/tmp/PlazzaKitchenNum";
 
         static constexpr auto RECEPTION_PIPE_SUFFIX = "-reception";
         static constexpr auto ORDERS_PIPE_SUFFIX = "-orders";
         static constexpr auto READY_PIZZAS_PIPE_SUFFIX = "-pizzas-ready";
+
+        static constexpr auto KITCHEN_STATUS_CMD = "STATUS";
     };
 } // namespace plazza
 
