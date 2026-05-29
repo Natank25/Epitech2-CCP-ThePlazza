@@ -6,56 +6,125 @@
 */
 
 #include "KitchenProcess.hpp"
-#include "Kitchen.hpp"
+
+#include <functional>
+
+#include "../Poller.hpp"
 #include "Constants.hpp"
+#include "Kitchen.hpp"
 
 namespace plazza {
-    KitchenProcess::KitchenProcess(std::size_t nbCooks, int refillTimeMs,
-        double multiplier)
-        : _namedPipeName(createTempFileName()),
-        _toReception(_namedPipeName),
-        _toKitchen(_namedPipeName),
-        _process(kitchenLoop, _toReception, _toKitchen, nbCooks, refillTimeMs,
-            multiplier)
+    KitchenProcess::KitchenProcess(size_t id, std::size_t nbCooks,
+        std::chrono::milliseconds refillTime, double multiplier) :
+        _id(id),
+        _namedPipeName(createTempFileName()),
+        _toReception(_namedPipeName + RECEPTION_PIPE_SUFFIX),
+        _orders(_namedPipeName + ORDERS_PIPE_SUFFIX),
+        _pizzaReady(_namedPipeName + READY_PIZZAS_PIPE_SUFFIX),
+        _process(kitchenLoop, std::ref(*this), nbCooks, refillTime, multiplier)
     {
     }
 
-    int KitchenProcess::kitchenLoop(NamedPipe toReception, const NamedPipe &toKitchen,
-        std::size_t nbCooks, int refillTimeMs, double multiplier)
+    JSON::JSON KitchenProcess::getStatus()
     {
-        Kitchen kitchen(refillTimeMs, multiplier, nbCooks);
+        this->getOrders() << KITCHEN_STATUS_CMD;
 
-        kitchen.setOnPizzaDone([&toReception](const PizzaOrder &order) {
-            auto os = toReception.getOutputStream();
-            os << order.pizzaName;
+        std::string line = this->getToReception().getLine();
+        std::istringstream iss(line);
+        return *JSON::JSON::parseStream(iss);
+    }
+
+    NamedPipe &KitchenProcess::getToReception()
+    {
+        return this->_toReception;
+    }
+
+    NamedPipe &KitchenProcess::getOrders()
+    {
+        return this->_orders;
+    }
+
+    NamedPipe &KitchenProcess::getPizzaReady()
+    {
+        return this->_pizzaReady;
+    }
+
+    const NamedPipe &KitchenProcess::getToReception() const
+    {
+        return this->_toReception;
+    }
+
+    const NamedPipe &KitchenProcess::getOrders() const
+    {
+        return this->_orders;
+    }
+
+    const NamedPipe &KitchenProcess::getPizzaReady() const
+    {
+        return this->_pizzaReady;
+    }
+
+    const std::size_t &KitchenProcess::getId() const
+    {
+        return this->_id;
+    }
+
+    static void initKitchen(KitchenProcess &process, Kitchen &kitchen)
+    {
+        kitchen.setOnPizzaDone([&process, &kitchen](const PizzaOrder &order) {
+            std::ostringstream data;
+            data << KitchenProcess::ORDER_DONE_CMD << " " << order;
+            process.getPizzaReady() << data.str();
+            kitchen.updatedEstimatedLastActivity();
         });
 
         kitchen.start();
+    }
+
+    static bool handleOrder(
+        KitchenProcess &process, Kitchen &kitchen, const std::string &line)
+    {
+        std::istringstream iss(line);
+        PizzaOrder order {};
+        if (!(iss >> order))
+            return true;
+        if (kitchen.isFull())
+            process.getToReception() << false;
+        else {
+            process.getToReception() << true;
+            kitchen.enqueue(order);
+        }
+        return false;
+    }
+
+    int KitchenProcess::kitchenLoop(KitchenProcess &process, size_t nbCooks,
+        std::chrono::milliseconds refillTime, double multiplier)
+    {
+        Kitchen kitchen(refillTime, multiplier, nbCooks);
+
+        initKitchen(process, kitchen);
+        Poller poller;
+        process.getOrders().openRead();
+        poller.pushBack(process.getOrders().getReadFd());
 
         while (kitchen.isRunning()) {
-            PizzaOrder order;
-            auto is = toKitchen.getInputStream();
-
-            if (!(is >> order))
+            if (poller.poll(0) == 0)
+                continue;
+            std::string line = process._orders.getLine();
+            if (line == KITCHEN_STATUS_CMD) {
+                process.getToReception()
+                    << kitchen.getStatus().toCompactString();
+            } else if (handleOrder(process, kitchen, line))
                 break;
-            auto os = toReception.getOutputStream();
-            if (kitchen.isFull()) {
-                os << "KO";
-            } else {
-                os << "OK";
-                kitchen.enqueue(order);
-            }
         }
+        process.getPizzaReady() << KITCHEN_CLOSE_CMD;
         kitchen.shutdown();
         return EPI_SUCCESS;
     }
 
-    std::string KitchenProcess::createTempFileName()
+    std::string KitchenProcess::createTempFileName() const
     {
-        static std::size_t kitchenId = 0;
-
-        std::string kitchenIdStr = std::to_string(kitchenId);
-        kitchenId++;
+        std::string kitchenIdStr = std::to_string(this->_id);
         return DEFAULT_TEMP_NAME + kitchenIdStr;
     }
 } // namespace plazza

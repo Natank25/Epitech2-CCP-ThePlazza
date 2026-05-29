@@ -7,6 +7,7 @@
 
 #ifndef PIZZA_HPP
     #define PIZZA_HPP
+#include <bits/chrono.h>
     #include <string>
     #include <vector>
 
@@ -16,13 +17,15 @@
 namespace plazza {
     class Pizza {
     public:
-        Pizza(std::vector<Ingredient> ingredients, double timeToCook);
+        Pizza(std::vector<Ingredient> ingredients,
+            std::chrono::milliseconds timeToCook);
 
         [[nodiscard]] std::vector<Ingredient> getIngredients();
-        [[nodiscard]] double getTimeToCook() const;
+        [[nodiscard]] std::chrono::milliseconds getTimeToCook() const;
+
     private:
         std::vector<Ingredient> _ingredients;
-        double _timeToCook;
+        std::chrono::milliseconds _timeToCook;
     };
 
     struct PizzaOrder {
@@ -36,10 +39,10 @@ namespace plazza {
 
     std::istream &operator>>(std::istream &stream, PizzaOrder &pizzaOrder);
 
-    std::ostream &operator<<(std::ostream &stream,
-        const PizzaOrder &pizzaOrder);
+    std::ostream &operator<<(
+        std::ostream &stream, const PizzaOrder &pizzaOrder);
 
     bool operator==(const PizzaOrder &lhs, const PizzaOrder &rhs);
 } // namespace plazza
 
-#endif //PIZZA_HPP
+#endif // PIZZA_HPP

@@ -5,16 +5,19 @@
 ** ${descriptor}
 */
 
+#include "Pizza.hpp"
+
+#include <algorithm>
+#include <chrono>
 #include <ranges>
 #include <utility>
 
-#include "Pizza.hpp"
 #include "PizzaFactory.hpp"
 
 namespace plazza {
-    Pizza::Pizza(std::vector<Ingredient> ingredients, double timeToCook) :
-        _ingredients(std::move(ingredients)),
-        _timeToCook(timeToCook)
+    Pizza::Pizza(std::vector<Ingredient> ingredients,
+        std::chrono::milliseconds timeToCook) :
+        _ingredients(std::move(ingredients)), _timeToCook(timeToCook)
     {
     }
 
@@ -23,7 +26,7 @@ namespace plazza {
         return _ingredients;
     }
 
-    double Pizza::getTimeToCook() const
+    std::chrono::milliseconds Pizza::getTimeToCook() const
     {
         return _timeToCook;
     }
@@ -31,26 +34,21 @@ namespace plazza {
     std::size_t PizzaOrderHasher::operator()(const PizzaOrder &order) const
     {
         std::size_t seed = 0x50C68423;
-        seed ^= (seed << 6) + (seed >> 2) + 0x146C67DE + static_cast<
-            std::size_t>(order.size);
+        seed ^= (seed << 6) + (seed >> 2) + 0x146C67DE +
+            static_cast<std::size_t>(order.size);
         std::hash<std::string> stringHasher;
-        seed ^= (seed << 6) + (seed >> 2) + 0x4787A36D + stringHasher(
-            order.pizzaName);
+        seed ^= (seed << 6) + (seed >> 2) + 0x4787A36D +
+            stringHasher(order.pizzaName);
         return seed;
-    }
-
-    bool operator==(const PizzaOrder &lhs, const PizzaOrder &rhs)
-    {
-        return lhs.size == rhs.size && lhs.pizzaName == rhs.pizzaName;
     }
 
     std::istream &operator>>(std::istream &stream, PizzaOrder &pizzaOrder)
     {
         std::string name;
         stream >> name;
-        std::transform(name.begin(), name.end(), name.begin(), tolower);
+        std::ranges::transform(name, name.begin(), tolower);
         pizzaOrder.pizzaName = name;
-        if (PizzaFactory::doesPizzaExists(pizzaOrder.pizzaName))
+        if (!PizzaFactory::doesPizzaExists(pizzaOrder.pizzaName))
             stream.setstate(std::ios::badbit);
         if (stream.peek() == ' ')
             stream >> pizzaOrder.size;
@@ -59,14 +57,18 @@ namespace plazza {
         return stream;
     }
 
-    std::ostream & operator<<(std::ostream &stream,
-        const PizzaOrder &pizzaOrder)
+    std::ostream &operator<<(std::ostream &stream, const PizzaOrder &pizzaOrder)
     {
         std::string size;
 
-        for(const auto &[fst, snd] : PIZZA_SIZE_FROM_STR)
-            if(snd == pizzaOrder.size)
+        for (const auto &[fst, snd] : PIZZA_SIZE_FROM_STR)
+            if (snd == pizzaOrder.size)
                 size = fst;
-        return stream << "{" << pizzaOrder.pizzaName << " " << size << "}";
+        return stream << pizzaOrder.pizzaName << " " << size;
+    }
+
+    bool operator==(const PizzaOrder &lhs, const PizzaOrder &rhs)
+    {
+        return lhs.size == rhs.size && lhs.pizzaName == rhs.pizzaName;
     }
 } // namespace plazza

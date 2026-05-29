@@ -10,36 +10,53 @@
     #include <functional>
     #include <queue>
 
-    #include "Cook.hpp"
     #include "../Pizza/Pizza.hpp"
+    #include "Cook.hpp"
+    #include "Json.hpp"
+    #include "Safequeue.hpp"
     #include "Stock.hpp"
 
 namespace plazza {
     class Kitchen {
     public:
-        Kitchen(int refillTime, double multiplier, std::size_t nbCooks);
+        Kitchen(std::chrono::milliseconds refillTime, double multiplier,
+            std::size_t nbCooks);
 
         void shutdown();
+
         void start();
+
+        void updatedEstimatedLastActivity();
 
         void enqueue(const PizzaOrder &order);
 
+        PizzaOrder popOrder();
+
         bool isFull() const;
+
         bool isRunning() const;
 
         void setOnPizzaDone(std::function<void(const PizzaOrder &)> cb);
+
         void stockRefillLoop();
+
         void inactivityCheckLoop();
 
         ~Kitchen();
+
+        JSON::JSON getCooksStatus() const;
+
+        JSON::JSON getStatus() const;
+
     private:
         static constexpr int CHECK_ACTIVITY_INTERVAL_MS = 500;
-        static constexpr int INACTIVITY_CLOSE_TIME_S = 5;
+        static constexpr auto INACTIVITY_CLOSE_TIME = std::chrono::seconds(5);
 
-        int _refillTimeMs;
+        std::chrono::milliseconds _refillTime;
         double _multiplier;
         std::atomic<bool> _running;
-        std::atomic<std::chrono::steady_clock::time_point> _lastActivity;
+        std::atomic<std::chrono::steady_clock::time_point>
+            _estimatedLastActivity;
 
         Stock _stock;
         SafeQueue<PizzaOrder> _queue;
@@ -50,4 +67,4 @@ namespace plazza {
     };
 } // namespace plazza
 
-#endif //KITCHEN_HPP
+#endif // KITCHEN_HPP
