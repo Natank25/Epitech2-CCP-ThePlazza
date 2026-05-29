@@ -13,18 +13,6 @@
 #include "Ingredient.hpp"
 
 namespace plazza {
-    Stock::Stock()
-    {
-        _ingredients = {{DOUGH.name, 5},
-            {TOMATO.name, 5},
-            {GRUYERE.name, 5},
-            {HAM.name, 5},
-            {MUSHROOMS.name, 5},
-            {STEAK.name, 5},
-            {EGGPLANT.name, 5},
-            {GOAT_CHEESE.name, 5},
-            {CHIEF_LOVE.name, 5}};
-    }
 
     void Stock::refillIngredients()
     {

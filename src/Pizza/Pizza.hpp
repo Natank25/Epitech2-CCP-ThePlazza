@@ -7,9 +7,9 @@
 
 #ifndef PIZZA_HPP
     #define PIZZA_HPP
+#include <bits/chrono.h>
     #include <string>
     #include <vector>
-#include <bits/chrono.h>
 
     #include "Ingredient.hpp"
     #include "PizzaInfos.hpp"

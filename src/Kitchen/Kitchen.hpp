@@ -13,8 +13,8 @@
     #include "../Pizza/Pizza.hpp"
     #include "Cook.hpp"
     #include "Json.hpp"
-    #include "Stock.hpp"
     #include "Safequeue.hpp"
+    #include "Stock.hpp"
 
 namespace plazza {
     class Kitchen {
@@ -26,8 +26,7 @@ namespace plazza {
 
         void start();
 
-        void updatedEstimatedLastActivity(
-        );
+        void updatedEstimatedLastActivity();
 
         void enqueue(const PizzaOrder &order);
 
@@ -57,7 +56,7 @@ namespace plazza {
         double _multiplier;
         std::atomic<bool> _running;
         std::atomic<std::chrono::steady_clock::time_point>
-        _estimatedLastActivity;
+            _estimatedLastActivity;
 
         Stock _stock;
         SafeQueue<PizzaOrder> _queue;

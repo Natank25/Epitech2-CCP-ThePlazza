@@ -29,18 +29,17 @@ namespace plazza {
 
     class Reception {
     public:
-        Reception(
-            std::size_t numCook, std::chrono::milliseconds refillTime, double multiplier);
+        Reception(std::size_t numCook, std::chrono::milliseconds refillTime,
+            double multiplier);
 
         void parseLine(const std::string &line);
 
         void sendOrders();
 
         void handleKitchenCommand(
-            const std::ranges::borrowed_iterator_t<std::vector<KitchenProcess>
-                &>
-            &
-            kitchenReady, const std::string &data);
+            const std::ranges::borrowed_iterator_t<
+                std::vector<KitchenProcess> &> &kitchenReady,
+            const std::string &data);
 
         void handleKitchenResponse(int fd);
 
@@ -60,8 +59,8 @@ namespace plazza {
         std::size_t _numCook;
         std::chrono::milliseconds _refillTime;
         double _multiplier;
-        std::ofstream _logFile{LOG_FILE};
-        std::size_t _nextKitchenId{0};
+        std::ofstream _logFile {LOG_FILE};
+        std::size_t _nextKitchenId {0};
 
         static constexpr auto LOG_FILE = "./Plazza.log";
         static constexpr char ORDER_SEPARATOR = ';';
@@ -73,19 +72,20 @@ namespace plazza {
 
         KitchenProcess &addNewKitchen();
 
-        using KitchenProcessIterator = std::ranges::borrowed_iterator_t<
-            std::vector<KitchenProcess> &>;
+        using KitchenProcessIterator =
+            std::ranges::borrowed_iterator_t<std::vector<KitchenProcess> &>;
 
-        void handleFinishedOrderCmd(KitchenProcessIterator kitchen,
-            std::istringstream &line);
+        void handleFinishedOrderCmd(
+            KitchenProcessIterator kitchen, std::istringstream &line);
 
-        void handleClosedKitchenCmd(KitchenProcessIterator kitchen,
-            std::istringstream &line);
+        void handleClosedKitchenCmd(
+            KitchenProcessIterator kitchen, std::istringstream &line);
 
         void handleStatusCmd();
 
-        static const std::unordered_map<std::string, void (Reception::*)(
-            KitchenProcessIterator, std::istringstream &)> KITCHEN_COMMANDS_FNS;
+        static const std::unordered_map<std::string,
+            void (Reception::*)(KitchenProcessIterator, std::istringstream &)>
+            KITCHEN_COMMANDS_FNS;
     };
 } // namespace plazza
 #endif

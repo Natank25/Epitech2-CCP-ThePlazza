@@ -9,8 +9,8 @@
     #define COOK_HPP
     #include <functional>
 
-    #include "Json.hpp"
     #include "../Pizza/Pizza.hpp"
+    #include "Json.hpp"
     #include "Stock.hpp"
 
 namespace plazza {
@@ -19,8 +19,7 @@ namespace plazza {
     class Cook {
     public:
         explicit Cook(std::size_t id);
-        void cookLoop(Kitchen & kitchen, Stock &stock,
-            double multiplier,
+        void cookLoop(Kitchen &kitchen, Stock &stock, double multiplier,
             const std::function<void(const PizzaOrder &)> &onDone);
 
         std::size_t getId() const;

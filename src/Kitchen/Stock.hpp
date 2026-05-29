@@ -16,16 +16,26 @@
 namespace plazza {
     class Stock {
     public:
-        Stock();
+        Stock() = default;
 
         void refillIngredients();
+
         bool retrieveIngredient(
             Ingredient const &ingredient, unsigned int quantity);
 
-        JSON::JSON getStatus() const;
+        [[nodiscard]] JSON::JSON getStatus() const;
 
     private:
-        std::unordered_map<std::string, unsigned int> _ingredients;
+        std::unordered_map<std::string, unsigned int> _ingredients{
+            {DOUGH.name, 5},
+            {TOMATO.name, 5},
+            {GRUYERE.name, 5},
+            {HAM.name, 5},
+            {MUSHROOMS.name, 5},
+            {STEAK.name, 5},
+            {EGGPLANT.name, 5},
+            {GOAT_CHEESE.name, 5},
+            {CHIEF_LOVE.name, 5}};
         std::mutex _mutex;
         std::condition_variable _cv;
     };

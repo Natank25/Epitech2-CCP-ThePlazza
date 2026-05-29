@@ -137,9 +137,14 @@ readability-redundant-function-ptr-dereference,
 readability-redundant-smartptr-get,
 readability-redundant-string-cstr,
 readability-redundant-string-init,
+readability-redundant-member-init,
 readability-simplify-subscript-expr,
 readability-static-accessed-through-instance,
 readability-static-definition-in-anonymous-namespace,
 readability-string-compare,
 readability-uniqueptr-delete-release,
 readability-use-anyofallof'
+
+CheckOptions:
+  - key: cppcoreguidelines-pro-type-member-init.IgnoreArrays
+    value: true

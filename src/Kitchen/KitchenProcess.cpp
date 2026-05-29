@@ -69,19 +69,40 @@ namespace plazza {
         return this->_id;
     }
 
+    static void initKitchen(KitchenProcess &process, Kitchen &kitchen)
+    {
+        kitchen.setOnPizzaDone([&process, &kitchen](const PizzaOrder &order) {
+            std::ostringstream data;
+            data << KitchenProcess::ORDER_DONE_CMD << " " << order;
+            process.getPizzaReady() << data.str();
+            kitchen.updatedEstimatedLastActivity();
+        });
+
+        kitchen.start();
+    }
+
+    static bool handleOrder(KitchenProcess &process, Kitchen &kitchen,
+        const std::string &line)
+    {
+        std::istringstream iss(line);
+        PizzaOrder order{};
+        if (!(iss >> order))
+            return true;
+        if (kitchen.isFull())
+            process.getToReception() << false;
+        else {
+            process.getToReception() << true;
+            kitchen.enqueue(order);
+        }
+        return false;
+    }
+
     int KitchenProcess::kitchenLoop(KitchenProcess &process, size_t nbCooks,
         std::chrono::milliseconds refillTime, double multiplier)
     {
         Kitchen kitchen(refillTime, multiplier, nbCooks);
 
-        kitchen.setOnPizzaDone([&process, &kitchen](const PizzaOrder &order) {
-            std::ostringstream data;
-            data << ORDER_DONE_CMD << " " << order;
-            process._pizzaReady << data.str();
-            kitchen.updatedEstimatedLastActivity();
-        });
-
-        kitchen.start();
+        initKitchen(process, kitchen);
         Poller poller;
         process.getOrders().openRead();
         poller.pushBack(process.getOrders().getReadFd());
@@ -93,18 +114,8 @@ namespace plazza {
             if (line == KITCHEN_STATUS_CMD) {
                 process.getToReception()
                     << kitchen.getStatus().toCompactString();
-                continue;
-            }
-            std::istringstream iss(line);
-            PizzaOrder order;
-            if (!(iss >> order))
+            } else if (handleOrder(process, kitchen, line))
                 break;
-            if (kitchen.isFull()) {
-                process.getToReception() << false;
-            } else {
-                process.getToReception() << true;
-                kitchen.enqueue(order);
-            }
         }
         process.getPizzaReady() << KITCHEN_CLOSE_CMD;
         kitchen.shutdown();
